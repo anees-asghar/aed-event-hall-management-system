@@ -9,41 +9,43 @@ root.title("Reservation System")
 
 
 # --- NAVIGATION BAR ---
-navbar = tk.Frame(root, highlightbackground="blue", highlightthickness=1, width=200)
-navbar.grid(row=0, column=0, sticky=tk.N+tk.W) # make navbar stick to top left through sticky
+navbar = tk.Frame(root, width=300, height=800, bg='#A52A2A')
+navbar.grid(row=0, column=0)
+navbar.grid_propagate(0)
 
-# navigation buttons
 
-home_btn = tk.Button(navbar, text="Home", width=30, height=2, command=lambda: home_frame.tkraise())
-home_btn.grid(row=0, column=0)
+# -- NAVIGATION BUTTONS --
+home_btn = tk.Button(navbar, text="Home", width=37, height=2, bg="#A52A2A", fg="white", command=lambda: home_frame.tkraise())
+home_btn.grid(row=0)
 
-logout_btn = tk.Button(navbar, text="Logout", width=30, height=2)
-logout_btn.grid(row=1, column=0)
+login_btn = tk.Button(navbar, text="Login", width=37, height=2, bg="#A52A2A", fg="white", command=lambda: login_frame.tkraise())
+login_btn.grid(row=1)
 
-login_btn = tk.Button(navbar, text="Login", width=30, height=2, command=lambda: login_frame.tkraise())
-login_btn.grid(row=1, column=0)
+logout_btn = tk.Button(navbar, text="Logout", width=37, height=2, bg="#A52A2A", fg="white")
+logout_btn.grid(row=1)
+
+login_btn.tkraise() # on starting the program login button will be shown instead of logout
 
 
 # --- BODY FRAMES ---
 
-# --- LOGIN PAGE ---
-login_frame = tk.Frame(root, highlightbackground="red", highlightthickness=1)
-login_frame.grid(row=0, column=1, sticky=tk.N)
-
-# login title label
-login_title = tk.Label(login_frame, width=140, height=39, text="Login")
-login_title.grid(row=0, column=0)
-
 # --- HOME PAGE ---
+home_frame = tk.Frame(root, width=1100, height=800)
+home_frame.grid(row=0, column=1)
+home_frame.grid_propagate(False)
 
-home_frame = tk.Frame(root, highlightbackground="red", highlightthickness=1)
-home_frame.grid(row=0, column=1, sticky=tk.N)
+home_frame_title = tk.Label(home_frame, text="Reserve Seats", font=("Arial", 30)) # home page title
+home_frame_title.place(x=200, y=100)
 
-# home title label
-home_title = tk.Label(home_frame, width=140, height=39, text="Home Page")
-home_title.grid(row=0, column=0)
+# -- LOGIN PAGE --
+login_frame = tk.Frame(root, width=1100, height=800)
+login_frame.grid(row=0, column=1)
+login_frame.grid_propagate(False)
 
-# home_frame.grid_forget()
-# login_frame.tkraise() # temporary
+login_frame_title = tk.Label(login_frame, text="Login", font=("Arial", 30)) # login page title
+login_frame_title.place(x=200, y=100)
+
+home_frame.tkraise() # on starting the program the home page frame will be shown
+
 
 root.mainloop()
