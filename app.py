@@ -27,6 +27,10 @@ logout_btn.grid(row=1)
 login_btn.tkraise() # on starting the program login button will be shown instead of logout
 
 
+quit_btn = tk.Button(navbar, text ="Close Application", width=37, height=2, bg="#A52A2A", fg="white", command=lambda: root.destroy())
+quit_btn.grid(row=2)
+
+
 # --- BODY FRAMES ---
 
 # --- HOME PAGE ---
