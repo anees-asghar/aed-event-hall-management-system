@@ -1,4 +1,7 @@
+
+
 import tkinter as tk
+import tkcalendar as tkcal
 
 
 # --- ROOT WINDOW ---
@@ -41,6 +44,11 @@ home_frame.grid_propagate(False)
 home_frame_title = tk.Label(home_frame, text="Reserve Seats", font=("Arial", 30)) # home page title
 home_frame_title.place(x=200, y=100)
 
+home_frame_calendar = tkcal.Calendar(home_frame, selectmode = "day", date_pattern = "d/m/yy")# home page calendar
+home_frame_calendar.place(x=650, y=80)
+
+
+
 # -- LOGIN PAGE --
 login_frame = tk.Frame(root, width=1100, height=800)
 login_frame.grid(row=0, column=1)
@@ -63,6 +71,8 @@ login_frame_pass.place(x=200, y=250)
 
 login_frame_submit_btn = tk.Button(login_frame, text="Submit", width=10, height=1, bg="#A52A2A", fg="white") # login submit btn
 login_frame_submit_btn.place(x=400, y=290)
+
+
 
 # -- REGISTER PAGE -- #needs fix and to be implemented
 # register_frame = tk.Frame(root, width=1100, height=800)
