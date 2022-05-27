@@ -11,20 +11,18 @@ class RootWindow(tk.Tk):
 
 
 class Navbar(tk.Frame):
-    def __init__(self, container, home_page, login_page): # container == root
-        self.home_page = home_page # temporary
-        self.login_page = login_page # temporary
+    def __init__(self, container): # container == root
 
         super().__init__(container, width=300, height=800, bg='#A52A2A') # self == navbar
         self.grid(row=0, column=0)
         self.grid_propagate(0)
 
         self.home_btn = tk.Button(self, text="Home", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=lambda: self.home_page.tkraise())
+            command=lambda: self.raise_home_page(container))
         self.home_btn.grid(row=0)
 
         self.login_btn = tk.Button(self, text="Login", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=lambda: self.login_page.tkraise())
+            command=lambda: self.raise_login_page(container))
         self.login_btn.grid(row=1)
 
         self.logout_btn = tk.Button(self, text="Logout", width=37, height=2, bg="#A52A2A", fg="white")
@@ -35,6 +33,14 @@ class Navbar(tk.Frame):
         self.quit_btn.grid(row=2)
 
         self.login_btn.tkraise() # on starting the program login button will be shown instead of logout
+
+    def raise_home_page(self, container):
+        home_page = container.__dict__["children"]["!homepage"]
+        home_page.tkraise()
+
+    def raise_login_page(self, container):
+        login_page = container.__dict__["children"]["!loginpage"]
+        login_page.tkraise()
 
 
 class HomePage(tk.Frame):
@@ -52,8 +58,7 @@ class HomePage(tk.Frame):
 
 
 class LoginPage(tk.Frame):
-    def __init__(self, container, register_page):
-        self.register_page = register_page # temporary
+    def __init__(self, container):
 
         super().__init__(container, width=1100, height=800)
         self.grid(row=0, column=1)
@@ -77,8 +82,12 @@ class LoginPage(tk.Frame):
 
         self.register_label = tk.Label(self, text="Don't have an accout? Register now.")
         self.register_label.place(x=200, y=380)
-        self.register_btn = tk.Button(self, text="Register", width=10, height=1, command=lambda: self.register_page.tkraise())
+        self.register_btn = tk.Button(self, text="Register", width=10, height=1, command=lambda: self.raise_register_page(container))
         self.register_btn.place(x=500, y=380)
+
+    def raise_register_page(self, container):
+        register_page = container.__dict__["children"]["!registerpage"]
+        register_page.tkraise()
 
 
 class RegisterPage(tk.Frame):
@@ -117,13 +126,14 @@ class RegisterPage(tk.Frame):
 
 if __name__ == "__main__":
     root = RootWindow()
+
+    navbar = Navbar(root)
+
     home_page = HomePage(root)
+    login_page = LoginPage(root)
     register_page = RegisterPage(root)
-    login_page = LoginPage(root, register_page)
 
     home_page.tkraise()
-
-    navbar = Navbar(root, home_page, login_page)
 
     root.mainloop()
  
