@@ -1,0 +1,7 @@
+- implement login page
+
+
+      "first_name" : first_name.get()
+                "last_name" : last_name.get()
+                "email" : email.get()
+                "password" : password.get()
