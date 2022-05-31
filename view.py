@@ -1,5 +1,7 @@
+import random
 import tkinter as tk
 import tkcalendar as tkcal
+from database import Database
 
 
 class RootWindow(tk.Tk):
@@ -31,36 +33,76 @@ class Navbar(tk.Frame):
 
         self.login_btn.tkraise() # on starting the program login button will be shown instead of logout
 
-    # def raise_home_page(self, container):
-    #     home_page = container.__dict__["children"]["!homepage"]
-    #     home_page.tkraise()
-
-    # def raise_login_page(self, container):
-    #     login_page = container.__dict__["children"]["!loginpage"]
-    #     login_page.tkraise()
-
 
 class HomePage(tk.Frame):
+
     def __init__(self, container):
 
-        super().__init__(container, width=1100, height=800, bg="#F8F9F9")
+        super().__init__(container, width=1100, height=800)
+        self.selected_date = "21/06/21"
+
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
         self.title = tk.Label(self, text="Reserve Seats", font=("Arial", 30)) # home page title
         self.title.place(x=200, y=100)
 
-        self.calendar = tkcal.Calendar(self, selectmode="day", date_pattern="d/m/yy")# home page calendar
-        self.calendar.place(x=650, y=80)
+        self.selected_date_label = tk.Label(self, text=f"Selected date: {self.selected_date}", font=("Arial", 14))
+        self.selected_date_label.place(x=200, y=180)
+
+        self.calendar = tkcal.Calendar(self, selectmode="day", date=21, month=6, year=2021, date_pattern="dd/mm/yy")# home page calendar
+        self.calendar.place(x=650, y=100)
+
+        self.select_date_btn = tk.Button(self, text="Select Date", command=self.select_date)
+        self.select_date_btn.place(x=650, y=320)
+
+        self.seat_grid = SeatGrid(self)
+        self.seat_grid.render(self.selected_date)
+        self.seat_grid.place(x=200, y=400)
+
+    def select_date(self):
+        if self.selected_date == self.calendar.get_date():
+            return
+        
+        self.selected_date = self.calendar.get_date()
+        self.selected_date_label.configure(text=f"Selected date: {self.selected_date}")
+        self.seat_grid.render(self.selected_date)
 
     def show(self):
         self.tkraise()
+        
+
+class SeatGrid(tk.Frame):
+    def __init__(self, container):
+        super().__init__(container, width=400, height=200)
+        self.buttons = {}
+    
+    def render(self, date):
+        reservations = db.fetch_reservations_by_date(date)
+        reserved_seats_data = {seat_num: {"owner_id": user_id} for _, user_id, _, seat_num in reservations}
+
+        nums = ['1', '2', '3', '4', '5']
+        letts = ['A', 'B', 'C', 'D', 'E']
+
+        for i, l in enumerate(letts):
+            for j, n in enumerate(nums):
+                seat_num = n+l
+                if seat_num in reserved_seats_data.keys():
+                    if reserved_seats_data[seat_num]["owner_id"] == logged_in_user_id:
+                        self.buttons[seat_num] = tk.Button(self, text=seat_num, width=10, height=2, bg="green")
+                        self.buttons[seat_num].grid(row=i, column=j)
+                    else:
+                        self.buttons[seat_num] = tk.Button(self, text=seat_num, width=10, height=2, bg="red")
+                        self.buttons[seat_num].grid(row=i, column=j)
+                else:
+                    self.buttons[seat_num] = tk.Button(self, text=seat_num, width=10, height=2, bg="white")
+                    self.buttons[seat_num].grid(row=i, column=j)
 
 
 class LoginPage(tk.Frame):
     def __init__(self, container):
 
-        super().__init__(container, width=1100, height=800, bg="#F8F9F9")
+        super().__init__(container, width=1100, height=800)
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
@@ -92,7 +134,7 @@ class LoginPage(tk.Frame):
 class RegisterPage(tk.Frame):
     def __init__(self, container):
 
-        super().__init__(container, width=1100, height=800, bg="#F8F9F9")
+        super().__init__(container, width=1100, height=800)
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
@@ -127,10 +169,13 @@ class RegisterPage(tk.Frame):
 
 
 if __name__ == "__main__":
+    logged_in_user_id = 1 # will be changed
+
+    db = Database("test.db")
     root = RootWindow()
 
+    # create main pages
     navbar = Navbar(root)
-
     home_page = HomePage(root)
     login_page = LoginPage(root)
     register_page = RegisterPage(root)
@@ -142,9 +187,8 @@ if __name__ == "__main__":
     navbar.quit_btn.configure(command=root.destroy)
     login_page.register_btn.configure(command=register_page.show)
 
-    
-
-    home_page.tkraise()
+    home_page.show()
 
     root.mainloop()
+    db.close()
  
