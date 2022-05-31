@@ -43,7 +43,7 @@ class Navbar(tk.Frame):
 class HomePage(tk.Frame):
     def __init__(self, container):
 
-        super().__init__(container, width=1100, height=800)
+        super().__init__(container, width=1100, height=800, bg="#F8F9F9")
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
@@ -60,7 +60,7 @@ class HomePage(tk.Frame):
 class LoginPage(tk.Frame):
     def __init__(self, container):
 
-        super().__init__(container, width=1100, height=800)
+        super().__init__(container, width=1100, height=800, bg="#F8F9F9")
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
@@ -92,7 +92,7 @@ class LoginPage(tk.Frame):
 class RegisterPage(tk.Frame):
     def __init__(self, container):
 
-        super().__init__(container, width=1100, height=800)
+        super().__init__(container, width=1100, height=800, bg="#F8F9F9")
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
