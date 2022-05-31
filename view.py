@@ -17,30 +17,27 @@ class Navbar(tk.Frame):
         self.grid(row=0, column=0)
         self.grid_propagate(0)
 
-        self.home_btn = tk.Button(self, text="Home", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=lambda: self.raise_home_page(container))
+        self.home_btn = tk.Button(self, text="Home", width=37, height=2, bg="#A52A2A", fg="white")
         self.home_btn.grid(row=0)
 
-        self.login_btn = tk.Button(self, text="Login", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=lambda: self.raise_login_page(container))
+        self.login_btn = tk.Button(self, text="Login", width=37, height=2, bg="#A52A2A", fg="white")
         self.login_btn.grid(row=1)
 
         self.logout_btn = tk.Button(self, text="Logout", width=37, height=2, bg="#A52A2A", fg="white")
         self.logout_btn.grid(row=1)
 
-        self.quit_btn = tk.Button(self, text ="Close Application", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=lambda: container.destroy())
+        self.quit_btn = tk.Button(self, text ="Close Application", width=37, height=2, bg="#A52A2A", fg="white")
         self.quit_btn.grid(row=2)
 
         self.login_btn.tkraise() # on starting the program login button will be shown instead of logout
 
-    def raise_home_page(self, container):
-        home_page = container.__dict__["children"]["!homepage"]
-        home_page.tkraise()
+    # def raise_home_page(self, container):
+    #     home_page = container.__dict__["children"]["!homepage"]
+    #     home_page.tkraise()
 
-    def raise_login_page(self, container):
-        login_page = container.__dict__["children"]["!loginpage"]
-        login_page.tkraise()
+    # def raise_login_page(self, container):
+    #     login_page = container.__dict__["children"]["!loginpage"]
+    #     login_page.tkraise()
 
 
 class HomePage(tk.Frame):
@@ -55,6 +52,9 @@ class HomePage(tk.Frame):
 
         self.calendar = tkcal.Calendar(self, selectmode="day", date_pattern="d/m/yy")# home page calendar
         self.calendar.place(x=650, y=80)
+
+    def show(self):
+        self.tkraise()
 
 
 class LoginPage(tk.Frame):
@@ -82,12 +82,11 @@ class LoginPage(tk.Frame):
 
         self.register_label = tk.Label(self, text="Don't have an accout? Register now.")
         self.register_label.place(x=200, y=380)
-        self.register_btn = tk.Button(self, text="Register", width=10, height=1, command=lambda: self.raise_register_page(container))
+        self.register_btn = tk.Button(self, text="Register", width=10, height=1)
         self.register_btn.place(x=500, y=380)
-
-    def raise_register_page(self, container):
-        register_page = container.__dict__["children"]["!registerpage"]
-        register_page.tkraise()
+    
+    def show(self):
+        self.tkraise()
 
 
 class RegisterPage(tk.Frame):
@@ -123,6 +122,9 @@ class RegisterPage(tk.Frame):
         self.register_btn = tk.Button(self, text="Submit", width=10, height=1, bg="#A52A2A", fg="white")
         self.register_btn.place(x=500, y=400)
 
+    def show(self):
+        self.tkraise()
+
 
 if __name__ == "__main__":
     root = RootWindow()
@@ -132,6 +134,15 @@ if __name__ == "__main__":
     home_page = HomePage(root)
     login_page = LoginPage(root)
     register_page = RegisterPage(root)
+
+    # Add functionality to buttons
+    navbar.home_btn.configure(command=home_page.show)
+    navbar.login_btn.configure(command=login_page.show)
+    navbar.logout_btn.configure(command=None) # to be implemented
+    navbar.quit_btn.configure(command=root.destroy)
+    login_page.register_btn.configure(command=register_page.show)
+
+    
 
     home_page.tkraise()
 
