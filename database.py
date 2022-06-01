@@ -1,8 +1,8 @@
 import sqlite3
 
 class Database:
-    def __init__(self, db):
-        self.conn = sqlite3.connect(db)
+    def __init__(self, database_name):
+        self.conn = sqlite3.connect(database_name)
         self.cursor = self.conn.cursor()
 
     def insert_user(self, first_name, last_name, email, password):
@@ -31,6 +31,18 @@ class Database:
                 "seat_number": seat_number
             }
         )
+        self.conn.commit()
+
+    def insert_reservations(self, user_id, date, seat_nums):
+        for seat_num in seat_nums:
+            self.cursor.execute(
+                "INSERT INTO reservations (user_id, date, seat_number) VALUES (:user_id, :date, :seat_number)",
+                {
+                    "user_id": user_id,
+                    "date": date,
+                    "seat_number": seat_num
+                }
+            )
         self.conn.commit()
 
     def fetch_reservations(self):
