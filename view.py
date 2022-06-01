@@ -1,4 +1,3 @@
-import random
 import tkinter as tk
 import tkcalendar as tkcal
 from database import Database
@@ -150,23 +149,52 @@ class LoginPage(tk.Frame):
         self.title_label = tk.Label(self, text="Login", font=("Arial", 30)) # login page title
         self.title_label.place(x=200, y=100)
 
+        self.error_label = tk.Label(self, text="", fg="red", font=("Arial"))#error label
+        self.error_label.place(x=200, y=180) 
+
         self.email_label = tk.Label(self, text="Email:", font=("Arial", 10)) # login page email
-        self.email_label.place(x=200, y=180)
+        self.email_label.place(x=200, y=220)
         self.email_entry = tk.Entry(self, width=50)
-        self.email_entry.place(x=200, y=200)
+        self.email_entry.place(x=200, y=240)
 
         self.password_label = tk.Label(self, text="Password:", font=("Arial", 10)) # login page password
-        self.password_label.place(x=200, y=230)
+        self.password_label.place(x=200, y=270)
         self.password_entry = tk.Entry(self,width=50,)
-        self.password_entry.place(x=200, y=250)
+        self.password_entry.place(x=200, y=290)
 
-        self.submit_btn = tk.Button(self, text="Submit", width=10, height=1, bg="#A52A2A", fg="white") # login submit btn
-        self.submit_btn.place(x=500, y=290)
+        self.submit_btn = tk.Button(self, text="Submit", width=10, height=1, bg="#A52A2A", fg="white", 
+            command= self.submit_data) # login submit btn
+        self.submit_btn.place(x=500, y=330)
+   
 
-        self.register_label = tk.Label(self, text="Don't have an accout? Register now.")
-        self.register_label.place(x=200, y=380)
+        self.register_label = tk.Label(self, text="Don't have an account? Register now.")
+        self.register_label.place(x=200, y=420)
         self.register_btn = tk.Button(self, text="Register", width=10, height=1)
-        self.register_btn.place(x=500, y=380)
+        self.register_btn.place(x=500, y=420)
+    
+    def submit_data(self):
+        email = self.email_entry.get()
+        password = self.password_entry.get()
+
+        # in case if one or more inputs are missing in register
+        if not email:
+            self.error_label.configure(text="Add an email please.")
+            return
+
+        if not password:
+            self.error_label.configure(text="Add a password please.")
+            return
+
+        user_id = db.login_user(email, password)
+        if user_id:
+            logged_in_user_id = user_id
+            home_page.show()
+            #Idea: When the user is logged in, top right corner, label saying the name of the user
+        else:
+            self.error_label.configure(text="User with these credentials does not exist.")
+        
+        self.email_entry.delete(0, 'end')
+        self.password_entry.delete(0, 'end')
     
     def show(self):
         self.tkraise()
@@ -182,10 +210,13 @@ class RegisterPage(tk.Frame):
         self.title_label = tk.Label(self, text="Register", font=("Arial", 30)) # register page title
         self.title_label.place(x=200, y=100)
 
+        self.error_label = tk.Label(self, text="", fg="red", font=("Arial"))#error label
+        self.error_label.place(x=200, y=140) 
+
         self.name_label = tk.Label(self, text="Name:", font=("Arial", 10)) # register page name 
         self.name_label.place(x=200, y=180)
         self.name_entry = tk.Entry(self,width=50) 
-        self.name_entry .place(x=200, y=200)
+        self.name_entry.place(x=200, y=200)
 
         self.last_name_label  = tk.Label(self, text="Last name:", font=("Arial", 10)) # register page last name 
         self.last_name_label.place(x=200, y=230)
@@ -202,17 +233,45 @@ class RegisterPage(tk.Frame):
         self.password_entry = tk.Entry(self,width=50)
         self.password_entry.place(x=200, y=350)
 
-        self.register_btn = tk.Button(self, text="Submit", width=10, height=1, bg="#A52A2A", fg="white")
+        self.register_btn = tk.Button(self, text="Submit", width=10, height=1, bg="#A52A2A", fg="white", 
+            command= self.submit_data)
         self.register_btn.place(x=500, y=400)
+
 
     def show(self):
         self.tkraise()
+    
+    def submit_data(self):
+        name = self.name_entry.get()
+        last_name = self.last_name_entry.get()
+        email = self.email_entry.get()
+        password = self.password_entry.get()
+
+        #In case if one or more inputs are missing in register
+        if not name:
+            self.error_label.configure(text="Name is missing")
+            return
+
+        if not last_name:
+            self.error_label.configure(text="Last name is missing")
+            return
+
+        if not email:
+            self.error_label.configure(text="Add an email please.")
+            return
+
+        if not password:
+            self.error_label.configure(text="Add a password please.")
+            return
+
+        print(name,last_name,email,password)
 
 
 if __name__ == "__main__":
     logged_in_user_id = 0 # will be changed
 
     db = Database("test.db")
+
     root = App()
 
     # create main pages

@@ -5,6 +5,8 @@ class Database:
         self.conn = sqlite3.connect(database_name)
         self.cursor = self.conn.cursor()
 
+    # User table functions
+
     def insert_user(self, first_name, last_name, email, password):
         self.cursor.execute(
             "INSERT INTO users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)",
@@ -21,6 +23,8 @@ class Database:
         self.cursor.execute("SELECT * FROM users;")
         users = self.cursor.fetchall()
         return users
+
+    # Reservation table functions
 
     def insert_reservation(self, user_id, date, seat_number):
         self.cursor.execute(
@@ -57,5 +61,39 @@ class Database:
         reservations = self.cursor.fetchall()
         return reservations
     
+    # Authentication functions
+    def register_user(self, first_name, last_name, email, password):
+        self.cursor.execute(
+            "INSERT INTO users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)",
+            {
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'password': password
+            }
+        )
+        self.conn.commit()
+
+    def login_user(self, email, password):
+        self.cursor.execute(
+            "SELECT * FROM users WHERE email = :email AND password = :password;", 
+            {"email": email ,"password": password}
+        )
+        user = self.cursor.fetchone()
+        
+        if user: return user[0] # return user id
+        else: return None
+
+
+    # def valid_credentials(self, email, password):
+    #     self.cursor.execute(
+    #         "SELECT * FROM users WHERE email = :email AND password = :password;", 
+    #         {"email": email ,"password": password}
+    #     )
+    #     user = self.cursor.fetchone()
+        
+    #     if user: return True
+    #     else: return False
+
     def close(self):
         self.conn.close()
