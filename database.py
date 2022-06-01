@@ -63,6 +63,11 @@ class Database:
     
     # Authentication functions
     def register_user(self, first_name, last_name, email, password):
+        self.cursor.execute("SELECT * FROM users WHERE email = :email;", {"email": email})
+        user = self.cursor.fetchone()
+        
+        if user: return False # user with this email already exists
+
         self.cursor.execute(
             "INSERT INTO users (first_name, last_name, email, password) VALUES (:first_name, :last_name, :email, :password)",
             {
@@ -73,6 +78,8 @@ class Database:
             }
         )
         self.conn.commit()
+        
+        return True
 
     def login_user(self, email, password):
         self.cursor.execute(

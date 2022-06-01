@@ -193,8 +193,8 @@ class LoginPage(tk.Frame):
         else:
             self.error_label.configure(text="User with these credentials does not exist.")
         
-        self.email_entry.delete(0, 'end')
-        self.password_entry.delete(0, 'end')
+        self.email_entry.delete(0, 'end') #Cleans the email entry
+        self.password_entry.delete(0, 'end') #Cleans the password entry
     
     def show(self):
         self.tkraise()
@@ -211,44 +211,41 @@ class RegisterPage(tk.Frame):
         self.title_label.place(x=200, y=100)
 
         self.error_label = tk.Label(self, text="", fg="red", font=("Arial"))#error label
-        self.error_label.place(x=200, y=140) 
+        self.error_label.place(x=200, y=170) 
 
-        self.name_label = tk.Label(self, text="Name:", font=("Arial", 10)) # register page name 
-        self.name_label.place(x=200, y=180)
-        self.name_entry = tk.Entry(self,width=50) 
-        self.name_entry.place(x=200, y=200)
+        self.first_name = tk.Label(self, text="Name:", font=("Arial", 10)) # register page name 
+        self.first_name.place(x=200, y=210)
+        self.first_name_entry = tk.Entry(self,width=50) 
+        self.first_name_entry.place(x=200, y=230)
 
         self.last_name_label  = tk.Label(self, text="Last name:", font=("Arial", 10)) # register page last name 
-        self.last_name_label.place(x=200, y=230)
+        self.last_name_label.place(x=200, y=260)
         self.last_name_entry = tk.Entry(self,width=50)
-        self.last_name_entry.place(x=200, y=250)
+        self.last_name_entry.place(x=200, y=280)
 
         self.email_label = tk.Label(self, text="Email:", font=("Arial", 10)) # register page email
-        self.email_label.place(x=200, y=280)
+        self.email_label.place(x=200, y=310)
         self.email_entry= tk.Entry(self,width=50)
-        self.email_entry.place(x=200, y=300)
+        self.email_entry.place(x=200, y=330)
 
         self.password_label = tk.Label(self, text="Password:", font=("Arial", 10)) # register page password
-        self.password_label.place(x=200, y=330)
+        self.password_label.place(x=200, y=360)
         self.password_entry = tk.Entry(self,width=50)
-        self.password_entry.place(x=200, y=350)
+        self.password_entry.place(x=200, y=380)
 
         self.register_btn = tk.Button(self, text="Submit", width=10, height=1, bg="#A52A2A", fg="white", 
             command= self.submit_data)
-        self.register_btn.place(x=500, y=400)
+        self.register_btn.place(x=500, y=430)
 
-
-    def show(self):
-        self.tkraise()
     
     def submit_data(self):
-        name = self.name_entry.get()
+        first_name = self.first_name_entry.get()
         last_name = self.last_name_entry.get()
         email = self.email_entry.get()
         password = self.password_entry.get()
 
         #In case if one or more inputs are missing in register
-        if not name:
+        if not first_name:
             self.error_label.configure(text="Name is missing")
             return
 
@@ -264,7 +261,21 @@ class RegisterPage(tk.Frame):
             self.error_label.configure(text="Add a password please.")
             return
 
-        print(name,last_name,email,password)
+        is_registered = db.register_user(first_name, last_name, email, password)
+
+        if is_registered:
+            self.error_label.configure(text="")
+            login_page.show()
+        else:
+            self.error_label.configure(text="User with this email already exists.")
+
+        self.first_name_entry.delete(0, "end")
+        self.last_name_entry.delete(0, "end")
+        self.email_entry.delete(0, 'end') 
+        self.password_entry.delete(0, 'end')
+
+    def show(self):
+        self.tkraise()
 
 
 if __name__ == "__main__":
