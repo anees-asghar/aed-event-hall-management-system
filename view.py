@@ -88,6 +88,8 @@ class SeatGrid(tk.Frame):
         self.selected_seats = set()
     
     def render(self, date):
+        self.selected_seats.clear() # clear selected seats when grid is re-rendered
+
         reservations = db.fetch_reservations_by_date(date)
         reserved_seats_data = {seat_num: {"owner_id": user_id} for _, user_id, _, seat_num in reservations}
 
@@ -279,9 +281,9 @@ class RegisterPage(tk.Frame):
 
 
 if __name__ == "__main__":
-    logged_in_user_id = 0 # will be changed
+    logged_in_user_id = None # no logged in user by default
 
-    db = Database("test.db")
+    db = Database("reservation_system.db")
 
     root = App()
 
