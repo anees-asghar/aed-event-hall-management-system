@@ -73,6 +73,10 @@ class HomePage(tk.Frame):
             return
         
         global logged_in_user_id
+        if not logged_in_user_id: # no user is logged in
+            login_page.show(message="Please login first.", message_color="green")
+            return
+        
         db.insert_reservations(logged_in_user_id, self.selected_date, self.seat_grid.selected_seats)
         self.seat_grid.render(self.selected_date)
 
