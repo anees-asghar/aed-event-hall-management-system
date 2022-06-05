@@ -77,6 +77,7 @@ class HomePage(tk.Frame):
         self.seat_grid.render(self.selected_date)
 
     def show(self):
+        self.seat_grid.render(self.selected_date)
         self.tkraise()
         
 
