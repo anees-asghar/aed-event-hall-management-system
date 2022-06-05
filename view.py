@@ -214,12 +214,10 @@ class LoginPage(tk.Frame):
             home_page.show() # redirect user to home page
             navbar.logout_btn.tkraise() # show logout button instead of login 
         else:
-            self.error_label.configure(text="User with these credentials does not exist.")
-            self.email_entry.delete(0, 'end') # clear the email entry
-            self.password_entry.delete(0, 'end') # clear the password entry
+            self.show(message="User with these credentials does not exist.") # show login page with error message
     
-    def show(self):
-        self.error_label.configure(text="") # clear the error message
+    def show(self, message="", message_color="red"):
+        self.error_label.configure(text=message, fg=message_color) # clear the error message
         self.email_entry.delete(0, 'end') # clear the email entry
         self.password_entry.delete(0, 'end') # clear the password entry
         self.tkraise()
@@ -289,16 +287,12 @@ class RegisterPage(tk.Frame):
         success = db.register_user(first_name, last_name, email, password)
 
         if success:
-            login_page.show()
+            login_page.show() # redirect to login page
         else:
-            self.error_label.configure(text="User with this email already exists.")
-            self.first_name_entry.delete(0, "end")
-            self.last_name_entry.delete(0, "end")
-            self.email_entry.delete(0, 'end') 
-            self.password_entry.delete(0, 'end')
+            self.show(message="User with this email already exists.") # show register page with error message
 
-    def show(self):
-        self.error_label.configure(text="")
+    def show(self, message="", message_color="red"):
+        self.error_label.configure(text=message, fg=message_color)
         self.first_name_entry.delete(0, "end")
         self.last_name_entry.delete(0, "end")
         self.email_entry.delete(0, 'end') 
