@@ -210,18 +210,18 @@ class LoginPage(tk.Frame):
 
         if user_id:
             global logged_in_user_id
-            logged_in_user_id = user_id
-            home_page.show()
-            #Idea: When the user is logged in, top right corner, label saying the name of the user
-            
-            navbar.logout_btn.tkraise()
+            logged_in_user_id = user_id # set global logged_in_user_id
+            home_page.show() # redirect user to home page
+            navbar.logout_btn.tkraise() # show logout button instead of login 
         else:
             self.error_label.configure(text="User with these credentials does not exist.")
-        
-        self.email_entry.delete(0, 'end') #Cleans the email entry
-        self.password_entry.delete(0, 'end') #Cleans the password entry
+            self.email_entry.delete(0, 'end') # clear the email entry
+            self.password_entry.delete(0, 'end') # clear the password entry
     
-    def show(self): #changing the tkraise to show
+    def show(self):
+        self.error_label.configure(text="") # clear the error message
+        self.email_entry.delete(0, 'end') # clear the email entry
+        self.password_entry.delete(0, 'end') # clear the password entry
         self.tkraise()
 
 
@@ -286,20 +286,23 @@ class RegisterPage(tk.Frame):
             self.error_label.configure(text="Add a password please.")
             return
 
-        is_registered = db.register_user(first_name, last_name, email, password)
+        success = db.register_user(first_name, last_name, email, password)
 
-        if is_registered:
-            self.error_label.configure(text="")
+        if success:
             login_page.show()
         else:
             self.error_label.configure(text="User with this email already exists.")
+            self.first_name_entry.delete(0, "end")
+            self.last_name_entry.delete(0, "end")
+            self.email_entry.delete(0, 'end') 
+            self.password_entry.delete(0, 'end')
 
+    def show(self):
+        self.error_label.configure(text="")
         self.first_name_entry.delete(0, "end")
         self.last_name_entry.delete(0, "end")
         self.email_entry.delete(0, 'end') 
         self.password_entry.delete(0, 'end')
-
-    def show(self):
         self.tkraise()
 
 
