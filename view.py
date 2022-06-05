@@ -1,3 +1,4 @@
+from ast import Lambda
 import tkinter as tk
 import tkcalendar as tkcal
 from database import Database
@@ -9,6 +10,8 @@ class App(tk.Tk):
         self.geometry("1400x800")
         self.resizable(False, False)
         self.title("Reservation System")
+    
+
 
 
 class Navbar(tk.Frame):
@@ -27,10 +30,12 @@ class Navbar(tk.Frame):
         self.logout_btn = tk.Button(self, text="Logout", width=37, height=2, bg="#A52A2A", fg="white")
         self.logout_btn.grid(row=1)
 
+
         self.quit_btn = tk.Button(self, text ="Close Application", width=37, height=2, bg="#A52A2A", fg="white")
         self.quit_btn.grid(row=2)
 
         self.login_btn.tkraise() # on starting the program login button will be shown instead of logout
+
 
 
 class HomePage(tk.Frame):
@@ -59,8 +64,8 @@ class HomePage(tk.Frame):
         self.seat_grid.render(self.selected_date)
         self.seat_grid.place(x=200, y=400)
 
-        self.book_seats_btn = tk.Button(self, text="Book", command=self.book_selected_seats)
-        self.book_seats_btn.place(x=200, y=700)
+        self.book_seats_btn = tk.Button(self, text="Book", width=7, height=1, bg="#A52A2A", fg="white", command=self.book_selected_seats)
+        self.book_seats_btn.place(x=800, y=750)
 
     def select_date(self):
         if self.selected_date == self.calendar.get_date():
@@ -73,6 +78,7 @@ class HomePage(tk.Frame):
     def book_selected_seats(self):
         if not self.seat_grid.selected_seats:
             return
+        
 
         db.insert_reservations(logged_in_user_id, self.selected_date, self.seat_grid.selected_seats)
         self.seat_grid.render(self.selected_date)
@@ -81,38 +87,69 @@ class HomePage(tk.Frame):
         self.tkraise()
         
 
-class SeatGrid(tk.Frame):
+class SeatGrid(tk.Frame): #SUGESTION IS IT POSSIBLE INSIDE THIS CLASS WE MAKE THE SEATS WITH TO LISTS BUT FOR THE DIFFERENT GROUPS OF SEATS EX: TOP LEFT SITS CALLED ALFA, TOP RIGHT BETA WHATEVER... WITH THIS IDEA WE CAN MANIPULATE THE SITS POSICIONING
     def __init__(self, container):
         super().__init__(container, width=400, height=200)
-        self.buttons = {}
+        self.buttons = {} #self.buttons["number of the seat"] 
         self.selected_seats = set()
     
     def render(self, date):
-        self.selected_seats.clear() # clear selected seats when grid is re-rendered
-
         reservations = db.fetch_reservations_by_date(date)
         reserved_seats_data = {seat_num: {"owner_id": user_id} for _, user_id, _, seat_num in reservations}
 
-        nums = ['1', '2', '3', '4', '5']
-        letts = ['A', 'B', 'C', 'D', 'E']
-
+        nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11','12','13','14']
+        letts = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
+        seats_to_ignore=['3F','4F','5F','10F','11F','12F','3A','4A','5A','10A','11A','12A'] #Seats that we dont need for the blue print
+        
         for i, l in enumerate(letts):
             for j, n in enumerate(nums):
                 seat_num = n+l
+                #Ignoring the buttons that we dont need
+                if seat_num in seats_to_ignore:
+                    continue 
                 if seat_num in reserved_seats_data.keys(): # if the seat is reserved
                     if reserved_seats_data[seat_num]["owner_id"] == logged_in_user_id: # seat owned by logged in user
                         self.buttons[seat_num] = self.OwnedSeatButton(self, seat_num)
-                        self.buttons[seat_num].grid(row=i, column=j)
+                        
+                        
                     else: # seat owned by different user
                         self.buttons[seat_num] = self.ReservedSeatButton(self, seat_num)
-                        self.buttons[seat_num].grid(row=i, column=j)
+                        
                 else: # if the seat is not reserved
                     self.buttons[seat_num] = self.OpenSeatButton(self, seat_num)
+                
+                 
+
+                #Giving space in between buttons to make the corridors
+                if n == '2':
+                    self.buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
+                if n == '12':
+                    self.buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
+                if l == 'F':
+                    self.buttons[seat_num].grid(row=i, column=j, pady=(0, 20))
+                if l == 'A':
+                    self.buttons[seat_num].grid(row=i, column=j, pady=(20, 0))
+                
+                else:
                     self.buttons[seat_num].grid(row=i, column=j)
 
+    
+        #VIP SITS
+        #ROW F
+        self.buttons["6F"].configure ( text="👑",fg="#FF2D00")
+        self.buttons["7F"].configure ( text="👑",fg = "#0023FF")
+        self.buttons["8F"].configure ( text="👑")
+        self.buttons["9F"].configure ( text="👑")
+        #ROW A
+        self.buttons["6A"].configure ( text="👑")
+        self.buttons["7A"].configure ( text="👑")
+        self.buttons["8A"].configure ( text="👑")
+        self.buttons["9A"].configure ( text="👑")
+        
+        
     class OpenSeatButton(tk.Button):
         def __init__(self, container, seat_num):
-            super().__init__(container, text=seat_num, width=10, height=2, bg="white", command=self.change_to_selected)
+            super().__init__(container, text=seat_num, width=5, height=1, bg="white", command=self.change_to_selected)
             self.seat_num = seat_num
             self.container = container
 
@@ -134,11 +171,11 @@ class SeatGrid(tk.Frame):
 
     class ReservedSeatButton(tk.Button):
         def __init__(self, container, seat_num):
-            super().__init__(container, text=seat_num, width=10, height=2, bg="red")
+            super().__init__(container, text=seat_num, width=5, height=1, bg="red")
 
     class OwnedSeatButton(tk.Button):
         def __init__(self, container, seat_num):
-            super().__init__(container, text=seat_num, width=10, height=2, bg="green")
+            super().__init__(container, text=seat_num, width=5, height=1, bg="green")
 
 
 class LoginPage(tk.Frame):
@@ -192,13 +229,18 @@ class LoginPage(tk.Frame):
             logged_in_user_id = user_id
             home_page.show()
             #Idea: When the user is logged in, top right corner, label saying the name of the user
+            
+            navbar.logout_btn.tkraise()
+           
+
+
         else:
             self.error_label.configure(text="User with these credentials does not exist.")
         
         self.email_entry.delete(0, 'end') #Cleans the email entry
         self.password_entry.delete(0, 'end') #Cleans the password entry
     
-    def show(self):
+    def show(self): #changing the tkraise to show
         self.tkraise()
 
 
@@ -281,9 +323,9 @@ class RegisterPage(tk.Frame):
 
 
 if __name__ == "__main__":
-    logged_in_user_id = None # no logged in user by default
+    logged_in_user_id = None # will be changed
 
-    db = Database("reservation_system.db")
+    db = Database("test.db")
 
     root = App()
 
@@ -292,11 +334,13 @@ if __name__ == "__main__":
     home_page = HomePage(root)
     login_page = LoginPage(root)
     register_page = RegisterPage(root)
+    
+
 
     # Add functionality to buttons
     navbar.home_btn.configure(command=home_page.show)
     navbar.login_btn.configure(command=login_page.show)
-    navbar.logout_btn.configure(command=None) # to be implemented
+    navbar.logout_btn.configure(command=navbar.login_btn.tkraise) # to be implemented 
     navbar.quit_btn.configure(command=root.destroy)
     login_page.register_btn.configure(command=register_page.show)
 
