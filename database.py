@@ -81,7 +81,7 @@ class Database:
         
         return True
 
-    def login_user(self, email, password):
+    def authenticate_user(self, email, password):
         self.cursor.execute(
             "SELECT * FROM users WHERE email = :email AND password = :password;", 
             {"email": email ,"password": password}

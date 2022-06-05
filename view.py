@@ -72,6 +72,7 @@ class HomePage(tk.Frame):
         if not self.seat_grid.selected_seats:
             return
         
+        global logged_in_user_id
         db.insert_reservations(logged_in_user_id, self.selected_date, self.seat_grid.selected_seats)
         self.seat_grid.render(self.selected_date)
 
@@ -88,6 +89,7 @@ class SeatGrid(tk.Frame):
     def render(self, date):
         self.selected_seats.clear() # clear selected seats when grid is re-rendered
 
+        global logged_in_user_id
         reservations = db.fetch_reservations_by_date(date)
         reserved_seats_data = {seat_num: {"owner_id": user_id} for _, user_id, _, seat_num in reservations}
 
@@ -146,7 +148,7 @@ class SeatGrid(tk.Frame):
             self.configure(command=self.change_to_selected)
 
             # remove seat number from selected
-            self.parent_grid.selected_seats.remove(self.seat_num)
+            self.container.selected_seats.remove(self.seat_num)
 
     class ReservedSeatButton(tk.Button):
         def __init__(self, container, seat_num):
@@ -202,9 +204,11 @@ class LoginPage(tk.Frame):
             self.error_label.configure(text="Add a password please.")
             return
 
-        user_id = db.login_user(email, password)
+        user_id = db.authenticate_user(email, password) # checks if a user with this email and password exists
+                                                        # and returns the user_id
 
         if user_id:
+            global logged_in_user_id
             logged_in_user_id = user_id
             home_page.show()
             #Idea: When the user is logged in, top right corner, label saying the name of the user
