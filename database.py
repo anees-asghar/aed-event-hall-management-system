@@ -1,4 +1,5 @@
 import sqlite3
+from unicodedata import name
 
 class Database:
     def __init__(self, database_name):
@@ -81,7 +82,7 @@ class Database:
         
         return True
 
-    def login_user(self, email, password):
+    def authenticate_user(self, email, password):
         self.cursor.execute(
             "SELECT * FROM users WHERE email = :email AND password = :password;", 
             {"email": email ,"password": password}
@@ -91,7 +92,7 @@ class Database:
         if user: return user[0] # return user id
         else: return None
 
-
+   
     # def valid_credentials(self, email, password):
     #     self.cursor.execute(
     #         "SELECT * FROM users WHERE email = :email AND password = :password;", 
