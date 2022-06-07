@@ -33,9 +33,20 @@ class Database:
         )
         reservations = self.cursor.fetchall()
         return reservations
+
+    def select_user_by_email(self, email):
+        """
+            Return from database the user with the specified email.
+            Return None if no such user exists.
+        """
+        self.cursor.execute("SELECT * FROM users WHERE email = :email;", {"email": email})
+        user = self.cursor.fetchone()
+        
+        if user: return user
+        else: return None
     
 
-    def register_user(self, first_name, last_name, email, password):
+    def insert_user(self, first_name, last_name, email, password):
         """
             Register a new user.
             Return True if registered successfully, False if user with the 

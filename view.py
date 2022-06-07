@@ -3,6 +3,35 @@ import tkcalendar as tkcal
 from database import Database
 
 
+class AuthManager:
+    def __init__(self, db):
+        self.db = db
+        self.logged_in_user_id = None
+    
+    def login_user(self, email, password):
+        user_id = self.db.authenticate_user(email, password) # checks if a user with this email and password exists
+                                                             # and returns the user_id
+        if user_id:
+            self.logged_in_user_id = user_id
+            return True
+        else:
+            return False
+
+    def logout_user(self):
+        self.logged_in_user_id = None
+        home_page.show()
+        navbar.show_login_btn()
+
+    def register_user(self, first_name, last_name, email, password):
+        # check if user with this email exists
+        user = self.db.select_user_by_email(email)
+        if user: return False
+
+        # register user
+        self.db.insert_user(first_name, last_name, email, password)
+        return True
+
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -31,6 +60,12 @@ class Navbar(tk.Frame):
         self.quit_btn.grid(row=2)
 
         self.login_btn.tkraise() # on starting the program login button will be shown instead of logout
+
+    def show_login_btn(self):
+        self.login_btn.tkraise()
+
+    def show_logout_btn(self):
+        self.logout_btn.tkraise()
 
 
 class HomePage(tk.Frame):
@@ -72,7 +107,7 @@ class HomePage(tk.Frame):
         if not self.seat_grid.selected_seats:
             return
         
-        global logged_in_user_id
+        logged_in_user_id = auth_manager.logged_in_user_id
         if not logged_in_user_id: # no user is logged in
             login_page.show(message="Please login first.", message_color="green")
             return
@@ -94,7 +129,7 @@ class SeatGrid(tk.Frame):
     def render(self, date):
         self.selected_seats.clear() # clear selected seats when grid is re-rendered
 
-        global logged_in_user_id
+        logged_in_user_id = auth_manager.logged_in_user_id
         reservations = db.fetch_reservations_by_date(date)
         reserved_seats_data = {seat_num: {"owner_id": user_id} for _, user_id, _, seat_num in reservations}
 
@@ -208,15 +243,11 @@ class LoginPage(tk.Frame):
         if not password:
             self.error_label.configure(text="Add a password please.")
             return
-
-        user_id = db.authenticate_user(email, password) # checks if a user with this email and password exists
-                                                        # and returns the user_id
-
-        if user_id:
-            global logged_in_user_id
-            logged_in_user_id = user_id # set global logged_in_user_id
+        
+        success = auth_manager.login_user(email, password)
+        if success:
             home_page.show() # redirect user to home page
-            navbar.logout_btn.tkraise() # show logout button instead of login 
+            navbar.show_logout_btn() # show logout button instead of login 
         else:
             self.show(message="User with these credentials does not exist.") # show login page with error message
     
@@ -288,7 +319,7 @@ class RegisterPage(tk.Frame):
             self.error_label.configure(text="Add a password please.")
             return
 
-        success = db.register_user(first_name, last_name, email, password)
+        success = auth_manager.register_user(first_name, last_name, email, password)
 
         if success:
             login_page.show() # redirect to login page
@@ -308,6 +339,7 @@ if __name__ == "__main__":
     logged_in_user_id = None # no logged in user by default
 
     db = Database("reservation_system.db")
+    auth_manager = AuthManager(db)
 
     root = App()
 
@@ -320,7 +352,7 @@ if __name__ == "__main__":
     # add functionality to buttons
     navbar.home_btn.configure(command=home_page.show)
     navbar.login_btn.configure(command=login_page.show)
-    navbar.logout_btn.configure(command=navbar.login_btn.tkraise)
+    navbar.logout_btn.configure(command=auth_manager.logout_user)
     navbar.quit_btn.configure(command=root.destroy)
     login_page.register_btn.configure(command=register_page.show)
 
