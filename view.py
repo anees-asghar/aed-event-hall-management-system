@@ -7,20 +7,25 @@ class AuthManager:
     def __init__(self, db):
         self.db = db
         self.logged_in_user_id = None
+
+    def authenticate_user(self, email, password):
+        user = self.db.select_user_by_email_password(email, password) # get user with this email and password
+        if user: # if such a user exists return their user id
+            return user[0]  # user[0] == user id
+        return None # if such a user doesn't exist return None
     
     def login_user(self, email, password):
-        user_id = self.db.authenticate_user(email, password) # checks if a user with this email and password exists
-                                                             # and returns the user_id
+        user_id = self.authenticate_user(email, password)
         if user_id:
-            self.logged_in_user_id = user_id
+            self.logged_in_user_id = user_id # set logged in user id
             return True
         else:
             return False
 
     def logout_user(self):
-        self.logged_in_user_id = None
-        home_page.show()
-        navbar.show_login_btn()
+        self.logged_in_user_id = None # set logged in used id to none
+        home_page.show() # redirect to home page
+        navbar.show_login_btn() # show login button in navbar instead of logout
 
     def register_user(self, first_name, last_name, email, password):
         # check if user with this email exists
@@ -130,7 +135,7 @@ class SeatGrid(tk.Frame):
         self.selected_seats.clear() # clear selected seats when grid is re-rendered
 
         logged_in_user_id = auth_manager.logged_in_user_id
-        reservations = db.fetch_reservations_by_date(date)
+        reservations = db.select_reservations_by_date(date)
         reserved_seats_data = {seat_num: {"owner_id": user_id} for _, user_id, _, seat_num in reservations}
 
         cols = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11','12','13','14']
