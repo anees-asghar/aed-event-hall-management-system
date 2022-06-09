@@ -1,16 +1,47 @@
-
-from distutils import command
 import tkinter as tk
 import tkcalendar as tkcal
 from database import Database
-from tkinter import Place, Tk, ttk
+from tkinter import ttk
+
+class AuthManager:
+    def __init__(self, db):
+        self.db = db
+        self.logged_in_user_id = None
+
+    def authenticate_user(self, email, password):
+        user = self.db.select_user_by_email_password(email, password) # get user with this email and password
+        if user: # if such a user exists return their user id
+            return user[0]  # user[0] == user id
+        return None # if such a user doesn't exist return None
+    
+    def login_user(self, email, password):
+        user_id = self.authenticate_user(email, password)
+        if user_id:
+            self.logged_in_user_id = user_id # set logged in user id
+            return True
+        else:
+            return False
+
+    def logout_user(self):
+        self.logged_in_user_id = None # set logged in used id to none
+        home_page.show() # redirect to home page
+        navbar.show_login_btn() # show login button in navbar instead of logout
+
+    def register_user(self, first_name, last_name, email, password):
+        # check if user with this email exists
+        user = self.db.select_user_by_email(email)
+        if user: return False
+
+        # register user
+        self.db.insert_user(first_name, last_name, email, password)
+        return True
 
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.geometry("1400x800")
-        #self.resizable(False, False)
+        self.resizable(False, False)
         self.title("Reservation System")
     
 
@@ -37,6 +68,12 @@ class Navbar(tk.Frame):
 
         self.admin_btn = tk.Button(self, text ="Admin Page", width=37, height=2, bg="#A52A2A", fg="white")
         self.admin_btn.grid(row=3)
+
+    def show_login_btn(self):
+        self.login_btn.tkraise()
+
+    def show_logout_btn(self):
+        self.logout_btn.tkraise()
 
 
 class HomePage(tk.Frame):
@@ -66,6 +103,29 @@ class HomePage(tk.Frame):
         self.book_seats_btn = tk.Button(self, text="Book", width=7, height=1, bg="#A52A2A", fg="white", command=self.book_selected_seats)
         self.book_seats_btn.place(x=800, y=750)
 
+        #Seat Label
+        self.empty_seat_label = tk.Label(self, text="Empty seat", font=("Georgia"))#empty seat label
+        self.empty_seat_label.place(x=200, y=230) 
+        self.empty_seat_btn = tk.Button(self, text="", width=5, height=1, bg="white",state="disabled")
+        self.empty_seat_btn.place(x=300, y=230)
+    
+        self.seat_taken_label = tk.Label(self, text="Seat Taken", font=("Georgia"))#seat takenlabel
+        self.seat_taken_label.place(x=200, y=260) 
+        self.seat_taken_btn = tk.Button(self, text="", width=5, height=1, bg="red",state="disabled")
+        self.seat_taken_btn.place(x=300, y=260)
+    
+        self.chosen_seat_label = tk.Label(self, text="Chosen seat", font=("Georgia"))#chosen seat label
+        self.chosen_seat_label.place(x=200, y=290) 
+        self.chosen_seat_btn = tk.Button(self, text="", width=5, height=1, bg="green",state="disabled")
+        self.chosen_seat_btn.place(x=300, y=290)
+
+        self.vip_seat_label = tk.Label(self, text="VIP seat", font=("Georgia"))#vip seat label
+        self.vip_seat_label.place(x=200, y=320)
+        self.vip_seat_btn = tk.Button(self, text="👑", width=5, height=1,state="disabled")
+        self.vip_seat_btn.place(x=300, y=320) 
+
+        
+
     def select_date(self):
         if self.selected_date == self.calendar.get_date():
             return
@@ -78,7 +138,7 @@ class HomePage(tk.Frame):
         if not self.seat_grid.selected_seats:
             return
         
-        global logged_in_user_id
+        logged_in_user_id = auth_manager.logged_in_user_id
         if not logged_in_user_id: # no user is logged in
             login_page.show(message="Please login first.", message_color="green")
             return
@@ -100,8 +160,8 @@ class SeatGrid(tk.Frame):
     def render(self, date):
         self.selected_seats.clear() # clear selected seats when grid is re-rendered
 
-        global logged_in_user_id
-        reservations = db.fetch_reservations_by_date(date)
+        logged_in_user_id = auth_manager.logged_in_user_id
+        reservations = db.select_reservations_by_date(date)
         reserved_seats_data = {seat_num: {"owner_id": user_id} for _, user_id, _, seat_num in reservations}
 
         cols = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11','12','13','14']
@@ -214,15 +274,11 @@ class LoginPage(tk.Frame):
         if not password:
             self.error_label.configure(text="Add a password please.")
             return
-
-        user_id = db.authenticate_user(email, password) # checks if a user with this email and password exists
-                                                        # and returns the user_id
-
-        if user_id:
-            global logged_in_user_id
-            logged_in_user_id = user_id # set global logged_in_user_id
+        
+        success = auth_manager.login_user(email, password)
+        if success:
             home_page.show() # redirect user to home page
-            navbar.logout_btn.tkraise() # show logout button instead of login 
+            navbar.show_logout_btn() # show logout button instead of login 
         else:
             self.show(message="User with these credentials does not exist.") # show login page with error message
     
@@ -294,7 +350,7 @@ class RegisterPage(tk.Frame):
             self.error_label.configure(text="Add a password please.")
             return
 
-        success = db.register_user(first_name, last_name, email, password)
+        success = auth_manager.register_user(first_name, last_name, email, password)
 
         if success:
             login_page.show() # redirect to login page
@@ -328,92 +384,81 @@ class AdminPage(tk.Frame):
         months_admin = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         years_admin = ["2022","2023"]
 
-        self.clicked = tk.StringVar()
+      
+        self.days_clicked = ttk.Combobox(self, value = days_admin) #command=
+        self.days_clicked.current(0)
+        #combo.bind("<<ComboboxSelected>>", comboclick)
+        self.days_clicked.place(x=200, y=350)
 
-        self.clicked.set(days_admin[0])
-        self.clicked.set(months_admin[0])
-        self.clicked.set(years_admin[0])
-     
-        self.comboD = ttk.Combobox(self, value = days_admin)
-        self.comboD.current(0)
+        self.month_clicked = ttk.Combobox(self, value = months_admin)
+        self.month_clicked.current(0)
         #combo.bind("<<ComboboxSelected>>", comboclick)
-        self.comboD.place(x=200, y=350)
+        self.month_clicked.place(x=400, y=350)
+        
+        self.year_clicked = ttk.Combobox(self, value = years_admin)
+        self.year_clicked.current(0)
+        #combo.bind("<<ComboboxSelected>>", comboclick)
+        self.year_clicked.place(x=600, y=350)
 
-        self.comboM = ttk.Combobox(self, value = months_admin)
-        self.comboM.current(0)
-        #combo.bind("<<ComboboxSelected>>", comboclick)
-        self.comboM.place(x=400, y=350)
-        
-        self.comboY = ttk.Combobox(self, value = years_admin)
-        self.comboY.current(0)
-        #combo.bind("<<ComboboxSelected>>", comboclick)
-        self.comboY.place(x=600, y=350)
-        #################################
-        
+   
         #Radio buttons
         
         self.radio_button_value = tk.IntVar()
+
         self.radio_day_btn = tk.Radiobutton ( self,variable = self.radio_button_value,value = 0, text="Day",command = self.day_radio_selected)
-        self.radio_month_btn = tk.Radiobutton ( self,variable = self.radio_button_value,value = 1, text="Month",command = self.month_radio_selected)
-        self.radio_year_btn = tk.Radiobutton ( self,variable = self.radio_button_value,value = 2, text="Year" ,command = self.year_radio_selected)
         self.radio_day_btn.place(x=200, y =300)
+
+        self.radio_month_btn = tk.Radiobutton ( self,variable = self.radio_button_value,value = 1, text="Month",command = self.month_radio_selected)
         self.radio_month_btn.place(x=400, y =300)
+
+        self.radio_year_btn = tk.Radiobutton ( self,variable = self.radio_button_value,value = 2, text="Year" ,command = self.year_radio_selected)
         self.radio_year_btn.place (x=600, y = 300)
         
-        #self.submit_date_btn = tk.Button(self,text= "Submit",command = self.)
-        #continue here
-        self.sales_list = self.SalesList(self)
+        self.submit_date_btn = tk.Button(self,text= "Submit")
+        self.submit_date_btn.place (x=800, y = 300)
+        
+       
 
-    def submit_button_click(self):
-        #day = self.comboD# get the value of the combo
+    # def submit_button_click(self):
+    #     day = self.days_clicked.get() #get the value of the days_clicked
+    #     month = self.month_clicked.get()
+    #     year = self.year_clicked.get()
 
-        if self.radio_button_value == 0:
-            self.sales_list.render()
-           
+    #     if self.day_radio_selected == True:
+    #         self.sales_list.render(day)
+    #         pass
+    #     if self.month_radio_selected == True:
+    #         self.sales_list.render(month)
+    #         pass
+    #     if self.year_radio_selected == True:
+    #         self.sales_list.render(year)
+    #         pass
+    
+
 
 
     def day_radio_selected(self):
-        self.comboD.configure(state="enabled")
-        self.comboM.configure(state="enabled")
-        self.comboY.configure(state="enabled")
+        self.days_clicked.configure(state="enabled")
+        self.month_clicked.configure(state="enabled")
+        self.year_clicked.configure(state="enabled")
+
     def month_radio_selected(self):
-        self.comboD.configure(state="disabled")
-        self.comboM.configure(state="enabled")
-        self.comboY.configure(state="enabled")
+        self.days_clicked.configure(state="disabled")
+        self.month_clicked.configure(state="enabled")
+        self.year_clicked.configure(state="enabled")
 
     def year_radio_selected(self):
-        self.comboD.configure(state="disabled")
-        self.comboM.configure(state="disabled")
-        self.comboY.configure(state="enabled")
+        self.days_clicked.configure(state="disabled")
+        self.month_clicked.configure(state="disabled")
+        self.year_clicked.configure(state="enabled")
 
-
-    class SalesList(tk.Frame):
-        def __init__(self, container):
             
-            super().__init__(container, width=600, height=300, bg="#F7CAC9")
-            self.grid(row=0, column=1)
-            self.place(x=200, y=400)
-            self.grid_propagate(False)
-            
-            self.total_earnings = "100€"
-            self.total_earnings_label = tk.Label(self, text=f"Total earning: {self.total_earnings}", font=("Arial", 22))
-            self.total_earnings_label.place(x=300, y=200)
-
-            self.selected_date = "20/02/22"
-            self.selected_date_label = tk.Label(self, text=f"Selected date: {self.selected_date}", font=("Arial", 14))
-            self.selected_date_label.place(x=300, y=130)
-
-        def render(self, date=None, month=None, year=None):
-            pass
-            
-
-
-       
 
 if __name__ == "__main__":
     logged_in_user_id = None # no logged in user by default
 
     db = Database("reservation_system.db")
+    auth_manager = AuthManager(db)
 
     root = App()
 
@@ -424,13 +469,12 @@ if __name__ == "__main__":
     register_page = RegisterPage(root)
     admin_page = AdminPage(root)
     
-    
     # add functionality to buttons
     navbar.home_btn.configure(command=home_page.show)
     navbar.login_btn.configure(command=login_page.show)
-    navbar.logout_btn.configure(command=navbar.login_btn.tkraise)
-    navbar.quit_btn.configure(command=root.destroy)
+    navbar.logout_btn.configure(command=auth_manager.logout_user)
     navbar.admin_btn.configure(command =admin_page.tkraise)
+    navbar.quit_btn.configure(command=root.destroy)
     login_page.register_btn.configure(command=register_page.show)
 
     home_page.show()
