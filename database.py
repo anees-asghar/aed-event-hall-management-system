@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 class Database:
     def __init__(self, database_name):
@@ -27,6 +28,30 @@ class Database:
         """
         self.cursor.execute(
             "SELECT * FROM reservations WHERE date = :date;", {"date": date}
+        )
+        reservations = self.cursor.fetchall()
+        return reservations
+
+    def select_reservations_by_month(self, month, year):
+        """
+            Select and return the reservations belonging to the specific month and
+            year from the reservations table.
+        """
+        # ??/mm/yy
+        self.cursor.execute(
+            "SELECT * FROM reservations WHERE date LIKE ?;", [f'%/{month}/{year}'] 
+        )
+        reservations = self.cursor.fetchall()
+        return reservations
+
+    def select_reservations_by_year(self, year):
+        """
+            Select and return the reservations belonging to the specific year from 
+            the reservations table.
+        """
+        # ??/mm/yy
+        self.cursor.execute(
+            "SELECT * FROM reservations WHERE date LIKE ?;", [f'%/{year}'] 
         )
         reservations = self.cursor.fetchall()
         return reservations

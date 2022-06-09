@@ -69,9 +69,6 @@ class Navbar(tk.Frame):
         self.admin_btn = tk.Button(self, text ="Admin Page", width=37, height=2, bg="#A52A2A", fg="white")
         self.admin_btn.grid(row=3)
 
-        self.my_reservations_btn = tk.Button(self, text ="My Reservations", width=37, height=2, bg="#A52A2A", fg="white")
-        self.my_reservations_btn.grid(row=4)
-
     def show_login_btn(self):
         self.login_btn.tkraise()
 
@@ -378,8 +375,9 @@ class AdminPage(tk.Frame):
         self.title_label = tk.Label(self, text="Admin Page", font=("Arial", 30)) # admin page title
         self.title_label.place(x=200, y=100)
 
-        self.sales_by_label = tk.Label(self, text="Sales by:", font=("Arial", 20)) 
-        self.sales_by_label.place(x=200, y=200)
+        self.Earnings_label = tk.Label(self, text="Sales by:", font=("Arial", 25)) 
+        self.Earnings_label.place(x=200, y=200)
+
 
         #Drop down menu for earnings
         self.days_admin = [(str(i) if i >= 10 else '0' + str(i)) for i in range(1, 32)]
@@ -514,111 +512,12 @@ class AdminPage(tk.Frame):
         self.month_clicked.configure(state="disabled")
         self.year_clicked.configure(state="enabled")
 
-class MyReservationsPage(tk.Frame):
-    def __init__(self, container):
-        super().__init__(container, width=1100, height=800)
-        self.selected_date = '01/01/22'
-
-        self.grid(row=0, column=1)
-        self.grid_propagate(False)
-
-        self.edit_seat_grid = self.EditSeatGrid(self)
-        self.edit_seat_grid.place(x=200, y=200)
-        self.edit_seat_grid.render(self.selected_date)
-    
-        self.edit_btn = tk.Button(self, text="Edit", width=7, height=1, bg="#A52A2A", fg="white")#Edit seat label
-        self.edit_btn.place(x=800, y=750)
-
-        self.delete_btn = tk.Button(self, text="Delete", width=7, height=1, bg="#A52A2A", fg="white")#Delete seat label
-        self.delete_btn.place(x=900, y=750)
-
-    def show(self):
-        self.edit_seat_grid.render(self.selected_date)
-        self.tkraise()
-
-    class EditSeatGrid(tk.Frame):
-        def __init__(self, container):
-            super().__init__(container, width=400, height=200)
-            self.buttons = {} # button of a particular seat can be accessed by self.buttons[<seat_number>]
-            self.selected_seat = ""
-        
-        def render(self, date):
-            self.selected_seat = "" # clear selected seats when grid is re-rendered
-
-            logged_in_user_id = auth_manager.logged_in_user_id
-            reservations = db.select_reservations_by_date(date)
-            user_seats = [r[3] for r in reservations if r[1] == logged_in_user_id] # r[1] == user_id and r[3] == seat_num
-
-            cols = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11','12','13','14']
-            rows = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
-            seats_to_ignore = ['3F','4F','5F','10F','11F','12F','3A','4A','5A','10A','11A','12A'] # seats that dont exist in the hall
-            
-            for i, r in enumerate(rows):
-                for j, c in enumerate(cols):
-                    seat_num = c+r # for example 1A
-                    
-                    if seat_num in seats_to_ignore: # ignore the seat_num for which button isn't needed
-                        continue 
-
-                    if seat_num in user_seats: # if the seat is reserved
-                        self.buttons[seat_num] = self.OwnedSeatButton(self, seat_num)
-                    else: # if the seat is not reserved
-                        self.buttons[seat_num] = self.DisabledSeatButton(self, seat_num)
-
-                    # place the button created in the grid
-                    if c in ['2', '12'] and r in ['B', 'F']: # row spacing and column spacing needed
-                        self.buttons[seat_num].grid(row=i, column=j, padx=(0, 20), pady=(0, 20))
-                    elif c in ['2', '12']: # only column spacing needed
-                        self.buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
-                    elif r in ['B', 'F']: # only row spacing needed
-                        self.buttons[seat_num].grid(row=i, column=j, pady=(0, 20))
-                    else: # no spacing needed
-                        self.buttons[seat_num].grid(row=i, column=j)
-        
-            # decorate VIP seats differently
-            for n in ["6F", "7F", "8F", "9F", "6A", "7A", "8A", "9A"]:
-                self.buttons[n].configure(text="👑")
-            
-        class OwnedSeatButton(tk.Button):
-            def __init__(self, container, seat_num):
-                super().__init__(container, text=seat_num, width=5, height=1, bg="green", command=self.change_to_selected)
-                self.seat_num = seat_num
-                self.container = container
-
-            def change_to_selected(self):
-                curr_selected_seat = self.container.selected_seat
-                print('start', curr_selected_seat)
-                if curr_selected_seat:
-                    self.container.buttons[curr_selected_seat].configure(bg="green", command=self.change_to_selected)
-                
-                # change button appearance
-                self.configure(bg="yellow")
-                self.configure(command=self.change_to_unselected) # change button command
-
-                # add seat number to selected
-                self.container.selected_seat = self.seat_num # seat_grid == self.container
-                print('end', self.container.selected_seat)
-            
-            def change_to_unselected(self):
-                # change button appearance
-                self.configure(bg="green")
-                self.configure(command=self.change_to_selected)
-
-                # remove seat number from selected
-                self.container.selected_seat = ""
-            
-        class DisabledSeatButton(tk.Button):
-            def __init__(self, container, seat_num):
-                super().__init__(container, text=seat_num, width=5, height=1, bg="white", state="disabled")
-
-    
-
 
 if __name__ == "__main__":
     logged_in_user_id = None # no logged in user by default
 
     db = Database("reservation_system.db")
-    # res = db.select_reservations_by_month(month="01", year="22")
+    # res = db.select_reservations_by_month(month="02", year="22")
     # print(res)
     auth_manager = AuthManager(db)
 
@@ -630,14 +529,12 @@ if __name__ == "__main__":
     login_page = LoginPage(root)
     register_page = RegisterPage(root)
     admin_page = AdminPage(root)
-    my_reservations_page = MyReservationsPage(root)
     
     # add functionality to buttons
     navbar.home_btn.configure(command=home_page.show)
     navbar.login_btn.configure(command=login_page.show)
     navbar.logout_btn.configure(command=auth_manager.logout_user)
     navbar.admin_btn.configure(command =admin_page.tkraise)
-    navbar.my_reservations_btn.configure(command=my_reservations_page.show)
     navbar.quit_btn.configure(command=root.destroy)
     login_page.register_btn.configure(command=register_page.show)
 
