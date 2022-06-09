@@ -1,7 +1,0 @@
-1-add reservation fucntionality
-2- complete login/register funct. 
-3
-
-
-###
-Optimizing
