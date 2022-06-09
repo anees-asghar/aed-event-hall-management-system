@@ -1,15 +1,16 @@
-from multiprocessing.sharedctypes import Value
+
+from distutils import command
 import tkinter as tk
 import tkcalendar as tkcal
 from database import Database
-from tkinter import ttk
+from tkinter import Place, Tk, ttk
 
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.geometry("1400x800")
-        self.resizable(False, False)
+        #self.resizable(False, False)
         self.title("Reservation System")
     
 
@@ -32,10 +33,10 @@ class Navbar(tk.Frame):
         self.quit_btn = tk.Button(self, text ="Close Application", width=37, height=2, bg="#A52A2A", fg="white")
         self.quit_btn.grid(row=2)
 
+        self.login_btn.tkraise() # on starting the program login button will be shown instead of logout
+
         self.admin_btn = tk.Button(self, text ="Admin Page", width=37, height=2, bg="#A52A2A", fg="white")
         self.admin_btn.grid(row=3)
-
-        self.login_btn.tkraise() # on starting the program login button will be shown instead of logout
 
 
 class HomePage(tk.Frame):
@@ -64,30 +65,6 @@ class HomePage(tk.Frame):
 
         self.book_seats_btn = tk.Button(self, text="Book", width=7, height=1, bg="#A52A2A", fg="white", command=self.book_selected_seats)
         self.book_seats_btn.place(x=800, y=750)
-
-        #Seat Label
-        self.empty_seat_label = tk.Label(self, text="Empty seat", font=("Georgia"))#empty seat label
-        self.empty_seat_label.place(x=200, y=230) 
-        self.empty_seat_btn = tk.Button(self, text="", width=5, height=1, bg="white")
-        self.empty_seat_btn.place(x=300, y=230)
-    
-        self.seat_taken_label = tk.Label(self, text="Seat Taken", font=("Georgia"))#seat takenlabel
-        self.seat_taken_label.place(x=200, y=260) 
-        self.seat_taken_btn = tk.Button(self, text="", width=5, height=1, bg="red")
-        self.seat_taken_btn.place(x=300, y=260)
-    
-        self.chosen_seat_label = tk.Label(self, text="Chosen seat", font=("Georgia"))#chosen seat label
-        self.chosen_seat_label.place(x=200, y=290) 
-        self.chosen_seat_btn = tk.Button(self, text="", width=5, height=1, bg="green")
-        self.chosen_seat_btn.place(x=300, y=290)
-
-        self.vip_seat_label = tk.Label(self, text="VIP seat", font=("Georgia"))#vip seat label
-        self.vip_seat_label.place(x=200, y=320)
-        self.vip_seat_btn = tk.Button(self, text="👑", width=5, height=1)
-        self.vip_seat_btn.place(x=300, y=320) 
-
-        
-        
 
     def select_date(self):
         if self.selected_date == self.calendar.get_date():
@@ -246,11 +223,6 @@ class LoginPage(tk.Frame):
             logged_in_user_id = user_id # set global logged_in_user_id
             home_page.show() # redirect user to home page
             navbar.logout_btn.tkraise() # show logout button instead of login 
-            
-            
-            # self.selected_name = "Teste" #########Francisco
-            # self.name_label = tk.Label(self, text=f"{self.selected_name}", font=("Arial", 14))
-            # self.name_label.place(x=1000, y=20)
         else:
             self.show(message="User with these credentials does not exist.") # show login page with error message
     
@@ -259,6 +231,7 @@ class LoginPage(tk.Frame):
         self.email_entry.delete(0, 'end') # clear the email entry
         self.password_entry.delete(0, 'end') # clear the password entry
         self.tkraise()
+
 
 class RegisterPage(tk.Frame):
     def __init__(self, container):
@@ -341,93 +314,99 @@ class AdminPage(tk.Frame):
 
         super().__init__(container, width=1100, height=800)
         self.grid(row=0, column=1)
-        #self.grid_propagate(False)
+        self.grid_propagate(False)
 
         self.title_label = tk.Label(self, text="Admin Page", font=("Arial", 30)) # admin page title
         self.title_label.place(x=200, y=100)
 
-        # Earnings_1_day
-        self.Earnings_1_day_label = tk.Label(self, text="Total Earnings in one day:", font=("Arial", 10)) 
-        self.Earnings_1_day_label.place(x=200, y=200)
+        self.Earnings_label = tk.Label(self, text="Sales by:", font=("Arial", 25)) 
+        self.Earnings_label.place(x=200, y=200)
 
-        
-        
-        #def comboclick(self,event):
-            #tk.Label(self, text = combo.get()).place(x=600, y=450)
-        # for months in months_admin:
-        #     for days in days_odd_admin:
-        #         if months == ["April","June","August","October","December"]:
-        #             #days = 
-        #             pass
 
-        days_odd_admin = [i for i in range(1,31+1)]
-        days_pair_admin = [i for i in range(1,30+1)]
-        days_fab_admin =[i for i in range(1,28+1)]
-
+        #Drop down menu for earnings
+        days_admin = [i for i in range(1,31+1)]
         months_admin = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         years_admin = ["2022","2023"]
+
         self.clicked = tk.StringVar()
+
+        self.clicked.set(days_admin[0])
         self.clicked.set(months_admin[0])
         self.clicked.set(years_admin[0])
-        # self.dropdown_menu = tk.OptionMenu(self, self.clicked, *months_admin)
-        # self.dropdown_menu.place(x=200, y=450)
+     
+        self.comboD = ttk.Combobox(self, value = days_admin)
+        self.comboD.current(0)
+        #combo.bind("<<ComboboxSelected>>", comboclick)
+        self.comboD.place(x=200, y=350)
 
-        comboM = ttk.Combobox(self, value = months_admin)
-        comboM.current(0)
+        self.comboM = ttk.Combobox(self, value = months_admin)
+        self.comboM.current(0)
         #combo.bind("<<ComboboxSelected>>", comboclick)
-        comboM.place(x=400, y=250)
+        self.comboM.place(x=400, y=350)
         
-        comboY = ttk.Combobox(self, value = years_admin)
-        comboY.current(0)
+        self.comboY = ttk.Combobox(self, value = years_admin)
+        self.comboY.current(0)
         #combo.bind("<<ComboboxSelected>>", comboclick)
-        comboY.place(x=600, y=250)
+        self.comboY.place(x=600, y=350)
         #################################
         
-        # Earnings_1_month
-        self.Earnings_1_month_label = tk.Label(self, text="Total Earnings in one month:", font=("Arial", 10)) 
-        self.Earnings_1_month_label.place(x=200, y=400)
-
+        #Radio buttons
         
-        #def comboclick(self,event):
-            #tk.Label(self, text = combo.get()).place(x=600, y=450)
-            
-        one_month_admin = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-        one_year_admin = ["2022","2023"]
-        self.clicked = tk.StringVar()
-        self.clicked.set(one_month_admin[0])
-        self.clicked.set(one_year_admin[0])
-        # self.dropdown_menu = tk.OptionMenu(self, self.clicked, *one_month_admin)
-        # self.dropdown_menu.place(x=200, y=450)
-
-        comboM = ttk.Combobox(self, value = one_month_admin)
-        comboM.current(0)
-        #combo.bind("<<ComboboxSelected>>", comboclick)
-        comboM.place(x=200, y=450) 
-
-        comboY = ttk.Combobox(self, value = one_year_admin)
-        comboY.current(0)
-        #combo.bind("<<ComboboxSelected>>", comboclick)
-        comboY.place(x=400, y=450)
-
-
-        ########################## 1 year
-        self.Earnings_1_year_label = tk.Label(self, text="Total Earnings in one year:", font=("Arial", 10)) 
-        self.Earnings_1_year_label.place(x=200, y=600)
+        self.radio_button_value = tk.IntVar()
+        self.radio_day_btn = tk.Radiobutton ( self,variable = self.radio_button_value,value = 0, text="Day",command = self.day_radio_selected)
+        self.radio_month_btn = tk.Radiobutton ( self,variable = self.radio_button_value,value = 1, text="Month",command = self.month_radio_selected)
+        self.radio_year_btn = tk.Radiobutton ( self,variable = self.radio_button_value,value = 2, text="Year" ,command = self.year_radio_selected)
+        self.radio_day_btn.place(x=200, y =300)
+        self.radio_month_btn.place(x=400, y =300)
+        self.radio_year_btn.place (x=600, y = 300)
         
+        #self.submit_date_btn = tk.Button(self,text= "Submit",command = self.)
+        #continue here
+        self.sales_list = self.SalesList(self)
 
-        #def comboclick(self,event):
-            #tk.Label(self, text = combo.get()).place(x=600, y=450)
+    def submit_button_click(self):
+        #day = self.comboD# get the value of the combo
+
+        if self.radio_button_value == 0:
+            self.sales_list.render()
+           
+
+
+    def day_radio_selected(self):
+        self.comboD.configure(state="enabled")
+        self.comboM.configure(state="enabled")
+        self.comboY.configure(state="enabled")
+    def month_radio_selected(self):
+        self.comboD.configure(state="disabled")
+        self.comboM.configure(state="enabled")
+        self.comboY.configure(state="enabled")
+
+    def year_radio_selected(self):
+        self.comboD.configure(state="disabled")
+        self.comboM.configure(state="disabled")
+        self.comboY.configure(state="enabled")
+
+
+    class SalesList(tk.Frame):
+        def __init__(self, container):
             
-        only_year =["2022","2023"]
-        self.clicked = tk.StringVar()
-        self.clicked.set(only_year[0])
-        # self.dropdown_menu = tk.OptionMenu(self, self.clicked, *only_year)
-        # self.dropdown_menu.place(x=200, y=450)
+            super().__init__(container, width=600, height=300, bg="#F7CAC9")
+            self.grid(row=0, column=1)
+            self.place(x=200, y=400)
+            self.grid_propagate(False)
+            
+            self.total_earnings = "100€"
+            self.total_earnings_label = tk.Label(self, text=f"Total earning: {self.total_earnings}", font=("Arial", 22))
+            self.total_earnings_label.place(x=300, y=200)
 
-        combo = ttk.Combobox(self, value = only_year)
-        combo.current(0)
-        #combo.bind("<<ComboboxSelected>>", comboclick)
-        combo.place(x=200, y=650) 
+            self.selected_date = "20/02/22"
+            self.selected_date_label = tk.Label(self, text=f"Selected date: {self.selected_date}", font=("Arial", 14))
+            self.selected_date_label.place(x=300, y=130)
+
+        def render(self, date=None, month=None, year=None):
+            pass
+            
+
 
        
 
@@ -444,7 +423,8 @@ if __name__ == "__main__":
     login_page = LoginPage(root)
     register_page = RegisterPage(root)
     admin_page = AdminPage(root)
-
+    
+    
     # add functionality to buttons
     navbar.home_btn.configure(command=home_page.show)
     navbar.login_btn.configure(command=login_page.show)
