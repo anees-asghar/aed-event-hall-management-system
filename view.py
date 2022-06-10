@@ -227,11 +227,11 @@ class SeatGrid(tk.Frame):
 
     class ReservedSeatButton(tk.Button):
         def __init__(self, container, seat_num):
-            super().__init__(container, text=seat_num, width=5, height=1, bg="red")
+            super().__init__(container, text=seat_num, width=5, height=1, bg="red", fg="white")
 
     class OwnedSeatButton(tk.Button):
         def __init__(self, container, seat_num):
-            super().__init__(container, text=seat_num, width=5, height=1, bg="green")
+            super().__init__(container, text=seat_num, width=5, height=1, bg="green", fg="white")
 
 
 class LoginPage(tk.Frame):
@@ -389,19 +389,16 @@ class AdminPage(tk.Frame):
         self.years_admin = ["2022","2023"]
 
       
-        self.days_clicked = ttk.Combobox(self, value = self.days_admin) #command=
+        self.days_clicked = ttk.Combobox(self, value = self.days_admin, state="readonly")
         self.days_clicked.current(0)
-        #combo.bind("<<ComboboxSelected>>", comboclick)
         self.days_clicked.place(x=200, y=350)
 
-        self.month_clicked = ttk.Combobox(self, value = self.months_admin)
+        self.month_clicked = ttk.Combobox(self, value = self.months_admin, state="readonly")
         self.month_clicked.current(0)
-        #combo.bind("<<ComboboxSelected>>", comboclick)
         self.month_clicked.place(x=400, y=350)
         
-        self.year_clicked = ttk.Combobox(self, value = self.years_admin)
+        self.year_clicked = ttk.Combobox(self, value = self.years_admin, state="readonly")
         self.year_clicked.current(0)
-        #combo.bind("<<ComboboxSelected>>", comboclick)
         self.year_clicked.place(x=600, y=350)
 
    
@@ -521,8 +518,6 @@ class MyReservationsPage(tk.Frame):
     def __init__(self, container):
         super().__init__(container, width=1100, height=800)
         self.selected_date = '01/01/22'
-        self.normal_open_seats = []
-        self.vip_open_seats = []
 
         self.grid(row=0, column=1)
         self.grid_propagate(False)
@@ -533,8 +528,11 @@ class MyReservationsPage(tk.Frame):
 
         self.edit_seat_label = tk.Label(self, text="New Seat Number:")
         self.edit_seat_label.place(x=400, y=750)
-        self.edit_seat_entry = tk.Entry(self, width=20)
-        self.edit_seat_entry.place(x=600, y=750)
+
+        self.all_seat_nums = [s[1] for s in db.select_all_seats()]
+        self.edit_seat_combo = ttk.Combobox(self, width=20, value=self.all_seat_nums, state="readonly")
+        self.edit_seat_combo.current(0)
+        self.edit_seat_combo.place(x=600, y=750)
     
         self.edit_btn = tk.Button(self, text="Edit", width=7, height=1, bg="#A52A2A", fg="white", 
             command=self.edit_reservation)
@@ -553,15 +551,17 @@ class MyReservationsPage(tk.Frame):
         self.show()
 
     def edit_reservation(self):
-        old_seat_num = self.select_seat_grid.selected_seat
-        new_seat_num = self.edit_seat_entry.get()
-        db.update_reservation(self.selected_date, old_seat_num, new_seat_num)
+        selected_seat_num = self.select_seat_grid.selected_seat
+        new_seat_num = self.edit_seat_combo.get()
+        
+        if not selected_seat_num or new_seat_num == '-':
+            return
+        
+        db.update_reservation(self.selected_date, selected_seat_num, new_seat_num)
         self.show()
 
     def show(self, message="", message_color="red"):
-
         self.select_seat_grid.render(self.selected_date) # re-render the select seat grid
-        self.edit_seat_entry.delete(0, 'end') # clear the edit seat entry field
         self.tkraise() # raise the my reservations page
 
     class SelectSeatGrid(tk.Frame):
@@ -643,8 +643,6 @@ class MyReservationsPage(tk.Frame):
 
 
 if __name__ == "__main__":
-    logged_in_user_id = None # no logged in user by default
-
     db = Database("reservation_system.db")
     auth_manager = AuthManager(db)
 
@@ -667,7 +665,7 @@ if __name__ == "__main__":
     navbar.quit_btn.configure(command=root.destroy)
     login_page.register_btn.configure(command=register_page.show)
 
-    my_reservations_page.tkraise()
+    home_page.tkraise()
 
     root.mainloop()
     db.close()

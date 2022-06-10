@@ -8,9 +8,16 @@ class Database:
     def select_seats_by_type(self, type):
         """ Select seats by type from seats table. """
         self.cursor.execute(
-            "SELECT * FROM reservations WHERE type = ?;", [type] 
+            "SELECT * FROM seats WHERE type = ?;", [type] 
         )
-        self.conn.commit()
+        seats = self.cursor.fetchall()
+        return seats
+
+    def select_all_seats(self):
+        """ Select all seats from seats table. """
+        self.cursor.execute("SELECT * FROM seats;")
+        seats = self.cursor.fetchall()
+        return seats
 
     def insert_reservations(self, user_id, date, seat_nums):
         """
