@@ -1,10 +1,16 @@
 import sqlite3
-import re
 
 class Database:
     def __init__(self, database_name):
         self.conn = sqlite3.connect(database_name)
         self.cursor = self.conn.cursor()
+
+    def select_seats_by_type(self, type):
+        """ Select seats by type from seats table. """
+        self.cursor.execute(
+            "SELECT * FROM reservations WHERE type = ?;", [type] 
+        )
+        self.conn.commit()
 
     def insert_reservations(self, user_id, date, seat_nums):
         """
@@ -37,7 +43,6 @@ class Database:
             Select and return the reservations belonging to the specific month and
             year from the reservations table.
         """
-        # ??/mm/yy
         self.cursor.execute(
             "SELECT * FROM reservations WHERE date LIKE ?;", [f'%/{month}/{year}'] 
         )
@@ -49,12 +54,33 @@ class Database:
             Select and return the reservations belonging to the specific year from 
             the reservations table.
         """
-        # ??/mm/yy
         self.cursor.execute(
             "SELECT * FROM reservations WHERE date LIKE ?;", [f'%/{year}'] 
         )
         reservations = self.cursor.fetchall()
         return reservations
+
+    def delete_reservation(self, date, seat_num):
+        """
+            Delete reservation with the the given date and seat number from 
+            the reservations table.
+        """
+        self.cursor.execute(
+            "DELETE FROM reservations WHERE date = ? AND seat_number = ?;", 
+            [date, seat_num]
+        )
+        self.conn.commit()
+
+    def update_reservation(self, date, old_seat_num, new_seat_num):
+        """
+            Update reservation with the the given date and seat number to have 
+            the new seat number in the reservations table.
+        """
+        self.cursor.execute(
+            "UPDATE reservations SET seat_number = ? WHERE seat_number = ? AND date = ?;",
+            [new_seat_num, old_seat_num, date]
+        )
+        self.conn.commit()
 
     def select_user_by_email(self, email):
         """

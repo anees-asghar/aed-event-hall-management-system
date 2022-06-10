@@ -3,6 +3,7 @@ import tkcalendar as tkcal
 from database import Database
 from tkinter import ttk
 
+
 class AuthManager:
     def __init__(self, db):
         self.db = db
@@ -368,6 +369,7 @@ class RegisterPage(tk.Frame):
         self.password_entry.delete(0, 'end')
         self.tkraise()
 
+
 class AdminPage(tk.Frame):
     def __init__(self, container):
 
@@ -514,29 +516,55 @@ class AdminPage(tk.Frame):
         self.month_clicked.configure(state="disabled")
         self.year_clicked.configure(state="enabled")
 
+
 class MyReservationsPage(tk.Frame):
     def __init__(self, container):
         super().__init__(container, width=1100, height=800)
         self.selected_date = '01/01/22'
+        self.normal_open_seats = []
+        self.vip_open_seats = []
 
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
-        self.edit_seat_grid = self.EditSeatGrid(self)
-        self.edit_seat_grid.place(x=200, y=200)
-        self.edit_seat_grid.render(self.selected_date)
+        self.select_seat_grid = self.SelectSeatGrid(self)
+        self.select_seat_grid.place(x=200, y=200)
+        self.select_seat_grid.render(self.selected_date)
+
+        self.edit_seat_label = tk.Label(self, text="New Seat Number:")
+        self.edit_seat_label.place(x=400, y=750)
+        self.edit_seat_entry = tk.Entry(self, width=20)
+        self.edit_seat_entry.place(x=600, y=750)
     
-        self.edit_btn = tk.Button(self, text="Edit", width=7, height=1, bg="#A52A2A", fg="white")#Edit seat label
+        self.edit_btn = tk.Button(self, text="Edit", width=7, height=1, bg="#A52A2A", fg="white", 
+            command=self.edit_reservation)
         self.edit_btn.place(x=800, y=750)
 
-        self.delete_btn = tk.Button(self, text="Delete", width=7, height=1, bg="#A52A2A", fg="white")#Delete seat label
+        self.delete_btn = tk.Button(self, text="Delete", width=7, height=1, bg="#A52A2A", fg="white", 
+            command=self.delete_reservation)
         self.delete_btn.place(x=900, y=750)
+    
+    def delete_reservation(self):
+        selected_seat_num = self.select_seat_grid.selected_seat
+        if not selected_seat_num:
+            self.show("Please select a seat to delete.")
+            return
+        db.delete_reservation(self.selected_date, self.select_seat_grid.selected_seat)
+        self.show()
 
-    def show(self):
-        self.edit_seat_grid.render(self.selected_date)
-        self.tkraise()
+    def edit_reservation(self):
+        old_seat_num = self.select_seat_grid.selected_seat
+        new_seat_num = self.edit_seat_entry.get()
+        db.update_reservation(self.selected_date, old_seat_num, new_seat_num)
+        self.show()
 
-    class EditSeatGrid(tk.Frame):
+    def show(self, message="", message_color="red"):
+
+        self.select_seat_grid.render(self.selected_date) # re-render the select seat grid
+        self.edit_seat_entry.delete(0, 'end') # clear the edit seat entry field
+        self.tkraise() # raise the my reservations page
+
+    class SelectSeatGrid(tk.Frame):
         def __init__(self, container):
             super().__init__(container, width=400, height=200)
             self.buttons = {} # button of a particular seat can be accessed by self.buttons[<seat_number>]
@@ -581,45 +609,43 @@ class MyReservationsPage(tk.Frame):
             
         class OwnedSeatButton(tk.Button):
             def __init__(self, container, seat_num):
-                super().__init__(container, text=seat_num, width=5, height=1, bg="green", command=self.change_to_selected)
+                super().__init__(container, text=seat_num, width=5, height=1, bg="green", 
+                    command=self.change_to_selected)
                 self.seat_num = seat_num
                 self.container = container
 
             def change_to_selected(self):
-                curr_selected_seat = self.container.selected_seat
-                print('start', curr_selected_seat)
-                if curr_selected_seat:
-                    self.container.buttons[curr_selected_seat].configure(bg="green", command=self.change_to_selected)
+                curr_selected_seat_num = self.container.selected_seat # seat number that is currently selected
                 
-                # change button appearance
-                self.configure(bg="yellow")
+                if curr_selected_seat_num: # if a seat number is already selected
+                    # access the button for this seat number
+                    curr_selected_seat_btn = self.container.buttons[curr_selected_seat_num]
+                    # change the appearance and commandd of this seat button back to normal
+                    curr_selected_seat_btn.configure(
+                        bg="green",
+                        command=curr_selected_seat_btn.change_to_selected
+                    )
+                
+                self.configure(bg="yellow") # change button appearance
                 self.configure(command=self.change_to_unselected) # change button command
 
-                # add seat number to selected
-                self.container.selected_seat = self.seat_num # seat_grid == self.container
-                print('end', self.container.selected_seat)
+                self.container.selected_seat = self.seat_num # set selected_seat in seat grid
             
             def change_to_unselected(self):
-                # change button appearance
-                self.configure(bg="green")
-                self.configure(command=self.change_to_selected)
+                self.configure(bg="green") # change button appearance
+                self.configure(command=self.change_to_selected) # change button command
 
-                # remove seat number from selected
-                self.container.selected_seat = ""
+                self.container.selected_seat = "" # reset selected seat in seat grid
             
         class DisabledSeatButton(tk.Button):
             def __init__(self, container, seat_num):
                 super().__init__(container, text=seat_num, width=5, height=1, bg="white", state="disabled")
-
-    
 
 
 if __name__ == "__main__":
     logged_in_user_id = None # no logged in user by default
 
     db = Database("reservation_system.db")
-    # res = db.select_reservations_by_month(month="01", year="22")
-    # print(res)
     auth_manager = AuthManager(db)
 
     root = App()
@@ -641,16 +667,8 @@ if __name__ == "__main__":
     navbar.quit_btn.configure(command=root.destroy)
     login_page.register_btn.configure(command=register_page.show)
 
-    admin_page.tkraise()
+    my_reservations_page.tkraise()
 
     root.mainloop()
     db.close()
-
-    # res = None
-    # user_res = []
-
-    # for r in res:
-    #     if r[1] == auth_manager.logged_in_user_id:
-    #         user_res.append(r)
-
  
