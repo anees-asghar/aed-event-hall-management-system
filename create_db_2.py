@@ -104,15 +104,18 @@ for seat_num in valid_seat_nums:
 # populate the events table
 events = ['Event: ' + str(i) for i in range(1, 20)]
 for year in [2022, 2023]:
-    for month in ['00', '01', '02', '03', '04', '05', '06', '07','08', '09', '10', '11', '12']:
-        for date in [d for d in range(1, 31)]:
+    for month in [m for m in range(1, 12+1)]:
+        for date in [d for d in range(1, 31+1)]:
             try:
-                datetime.datetime(year, int(month), date)
-                # date format = 01/01/22
-                date = str(date) if date >= 10 else '0' + str(date)
+                datetime.datetime(year, month, date) # if this isn't a valid date, an error will be raised
+                
+                date = str(date) if date >= 10 else '0'+str(date)     # date format dd
+                month = str(month) if month >= 10 else '0'+str(month) # moth format mm
+                year = str(year)[-2:]                                 # year format yy
+
                 cursor.execute(
                     "INSERT INTO events (name, date) VALUES (?, ?);",
-                    [random.choice(events), f'{date}/{month}/{str(year)}']
+                    [random.choice(events), f'{date}/{month}/{year}']
                 )
             except:
                 continue
