@@ -8,38 +8,31 @@ from components.home_page import HomePage
 from components.admin_page import AdminPage
 from components.login_page import LoginPage
 from components.register_page import RegisterPage
-from components.my_resrvations_page import MyReservationsPage
+from components.my_reservations_page import MyReservationsPage
+
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.geometry("1400x800")
-        self.resizable(False, False)
-        self.title("Reservation System")
+        self.geometry("1400x800")           # set window dimensions
+        self.resizable(False, False)        # make window unresizable
+        self.title("Reservation System")    # set window title
 
+        self.db = Database("reservation_system.db")     # connect to database
+        self.auth_manager = AuthManager(app=self)       # instance of authentication manager class
 
-        self.db = Database("reservation_system.db")
-        self.auth_manager = AuthManager(self.db, self)
-
-        # create main pages
-        self.navbar = Navbar(self)
+        # create the body pages
         self.home_page = HomePage(self)
-        self.login_page = LoginPage(self)
         self.register_page = RegisterPage(self)
+        self.login_page = LoginPage(self)
         self.admin_page = AdminPage(self)
         self.my_reservations_page = MyReservationsPage(self)
-        
-        # add functionality to buttons
-        self.navbar.home_btn.configure(command=self.home_page.show)
-        self.navbar.login_btn.configure(command=self.login_page.show)
-        self.navbar.logout_btn.configure(command=self.auth_manager.logout_user)
-        self.navbar.admin_btn.configure(command =self.admin_page.tkraise)
-        self.navbar.my_reservations_btn.configure(command=self.my_reservations_page.show)
-        self.navbar.quit_btn.configure(command=self.destroy)
-        self.login_page.register_btn.configure(command=self.register_page.show)
+
+        self.navbar = Navbar(self) # create the navbar
 
 
 if __name__ == "__main__":
-    app = App()
-    app.home_page.tkraise()
-    app.mainloop()
+    app = App()          # create an app instance
+    app.home_page.show() # show home_page on boot up
+    app.mainloop()       # run the app
+    app.db.close()       # close db connection

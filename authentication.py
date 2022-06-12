@@ -1,7 +1,7 @@
 class AuthManager:
-    def __init__(self, db, app):
-        self.db = db
+    def __init__(self, app):
         self.app = app
+        self.db = self.app.db
         self.logged_in_user_id = None
 
     def authenticate_user(self, email, password):

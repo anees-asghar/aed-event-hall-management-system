@@ -30,7 +30,8 @@ class LoginPage(tk.Frame):
 
         self.register_label = tk.Label(self, text="Don't have an account? Register now.")
         self.register_label.place(x=200, y=420)
-        self.register_btn = tk.Button(self, text="Register", width=10, height=1)
+        self.register_btn = tk.Button(self, text="Register", width=10, height=1, 
+            command=self.container.register_page.show)
         self.register_btn.place(x=500, y=420)
     
     def submit_data(self):

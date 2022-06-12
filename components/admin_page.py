@@ -144,3 +144,6 @@ class AdminPage(tk.Frame):
         self.month_clicked.configure(state="disabled")
         self.year_clicked.configure(state="enabled")
 
+    def show(self):
+        self.tkraise()
+
