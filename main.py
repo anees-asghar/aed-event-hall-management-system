@@ -33,6 +33,6 @@ class App(tk.Tk):
 
 if __name__ == "__main__":
     app = App()          # create an app instance
-    app.home_page.show() # show home_page on boot up
+    app.home_page.show() # show home_page on startup
     app.mainloop()       # run the app
     app.db.close()       # close db connection
