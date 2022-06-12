@@ -5,7 +5,7 @@ class LoginPage(tk.Frame):
         super().__init__(app, width=1100, height=800)
         self.app = app
 
-        # put login_page inside app
+        # put login_page inside app window
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
@@ -42,20 +42,22 @@ class LoginPage(tk.Frame):
         self.register_btn.place(x=500, y=420)
     
     def submit_data(self):
+        # get data from the input fields
         email = self.email_entry.get()
         password = self.password_entry.get()
 
-        # in case if one or more inputs are missing in register
+        # check if email field is empty
         if not email:
-            self.show(message="Add an email please.")
+            self.show(message="Please add an email.")
             return
 
+        # check if password field is empty
         if not password:
-            self.show(message="Add a password please.")
+            self.show(message="Please add a password.")
             return
         
-        # login user
-        success = self.app.auth_manager.login_user(email, password)
+        success = self.app.auth_manager.login_user(email, password) # log in user
+
         if success: # if logged in successfully
             self.app.home_page.show()         # redirect to home page
             self.app.navbar.show_logout_btn() # show logout button in navbar 
@@ -65,6 +67,6 @@ class LoginPage(tk.Frame):
     
     def show(self, message="", message_color="red"):
         self.error_label.configure(text=message, fg=message_color) # set the error message (if any)
-        self.email_entry.delete(0, 'end')                          # clear the email entry
-        self.password_entry.delete(0, 'end')                       # clear the password entry
+        self.email_entry.delete(0, 'end')                          # clear the email entry field
+        self.password_entry.delete(0, 'end')                       # clear the password entry field
         self.tkraise()                                             # raise the login_page
