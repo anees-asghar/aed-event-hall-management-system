@@ -1,8 +1,8 @@
 import tkinter as tk
 from database import Database
 from tkinter import ttk
-
-
+from tkinter import messagebox
+import tkcalendar as tkcal
 
 class MyReservationsPage(tk.Frame):
     def __init__(self, container):
@@ -13,8 +13,19 @@ class MyReservationsPage(tk.Frame):
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
+        self.selected_date_label = tk.Label(self, text=f"Selected date: {self.selected_date}", font=("Arial", 14))
+        self.selected_date_label.place(x=400, y=80)
+
+        self.calendar = tkcal.Calendar(self, selectmode="day", date=1, month=1, year=2022, date_pattern="dd/mm/yy")# home page calendar
+        self.calendar.place(x=650, y=50)
+
+        self.select_date_btn = tk.Button(self, text="Select Date", command=self.select_date)
+        self.select_date_btn.place(x=400, y=150)
+
+        
+        
         self.select_seat_grid = self.SelectSeatGrid(self)
-        self.select_seat_grid.place(x=200, y=200)
+        self.select_seat_grid.place(x=200, y=300)
         self.select_seat_grid.render(self.selected_date)
 
         self.edit_seat_label = tk.Label(self, text="New Seat Number:")
@@ -26,12 +37,30 @@ class MyReservationsPage(tk.Frame):
         self.edit_seat_combo.place(x=600, y=750)
     
         self.edit_btn = tk.Button(self, text="Edit", width=7, height=1, bg="#A52A2A", fg="white", 
-            command=self.edit_reservation)
+            command=self.edit_popup)
         self.edit_btn.place(x=800, y=750)
 
         self.delete_btn = tk.Button(self, text="Delete", width=7, height=1, bg="#A52A2A", fg="white", 
-            command=self.delete_reservation)
+            command=self.delete_popup)
         self.delete_btn.place(x=900, y=750)
+
+    def select_date(self):
+        if self.selected_date == self.calendar.get_date():
+            return
+        
+        self.selected_date = self.calendar.get_date()
+        self.selected_date_label.configure(text=f"Selected date: {self.selected_date}")
+        self.select_seat_grid.render(self.selected_date)
+
+    
+
+    def edit_popup(self):
+        question = messagebox.askquestion("Edit","Do you want to edit this seat?")
+        if question == "yes": self.edit_reservation()  
+    
+    def delete_popup(self):
+        question = messagebox.askquestion("Delete","Do you want to delete this seat?")
+        if question == "yes": self.delete_reservation()
     
     def delete_reservation(self):
         selected_seat_num = self.select_seat_grid.selected_seat

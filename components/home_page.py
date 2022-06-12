@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkcalendar as tkcal
 from tkinter import ttk
+from tkinter import messagebox
 
 class HomePage(tk.Frame):
     def __init__(self, container):
@@ -28,7 +29,7 @@ class HomePage(tk.Frame):
         self.seat_grid.render(self.selected_date)
         self.seat_grid.place(x=200, y=400)
 
-        self.book_seats_btn = tk.Button(self, text="Book", width=7, height=1, bg="#A52A2A", fg="white", command=self.book_selected_seats)
+        self.book_seats_btn = tk.Button(self, text="Book", width=7, height=1, bg="#A52A2A", fg="white", command=self.booking_popup)
         self.book_seats_btn.place(x=800, y=750)
 
         #Seat Label
@@ -52,7 +53,10 @@ class HomePage(tk.Frame):
         self.vip_seat_btn = tk.Button(self, text="👑", width=5, height=1,state="disabled")
         self.vip_seat_btn.place(x=300, y=320) 
 
-        
+    def booking_popup(self):
+        question = messagebox.askquestion("Confirmation","Are you sure you want to buy this ticket/s?")
+        if question == "yes": self.book_selected_seats()  
+           
 
     def select_date(self):
         if self.selected_date == self.calendar.get_date():
