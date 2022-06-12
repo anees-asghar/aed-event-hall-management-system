@@ -82,7 +82,8 @@ class RegisterPage(tk.Frame):
         success = self.app.auth_manager.register_user(first_name, last_name, email, password) # register user
 
         if success: # if logged in successfully
-            self.app.login_page.show("User registered successfully.") # redirect to login page
+            # redirect to login page with success message
+            self.app.login_page.show("User registered successfully.", "green") 
         
         else: # if not registered successfully (email already in use)
             self.show(message="User with this email already exists.")
