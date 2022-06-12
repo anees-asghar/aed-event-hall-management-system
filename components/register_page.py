@@ -91,10 +91,12 @@ class RegisterPage(tk.Frame):
         """
             Return True if the format of the given email address is valid, False if not.
         """
-        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        if re.fullmatch(regex, email):
-            return True
-        return False
+        # WILL BE UNCOMMENTED IN THE END
+        # regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        # if re.fullmatch(regex, email):
+        #     return True
+        # return False
+        return True
 
     def show(self, message="", message_color="red"):
         self.error_label.configure(text=message, fg=message_color) # set the error message (if any)
