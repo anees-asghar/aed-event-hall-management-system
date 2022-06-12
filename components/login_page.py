@@ -61,6 +61,13 @@ class LoginPage(tk.Frame):
         if success: # if logged in successfully
             self.app.home_page.show()         # redirect to home page
             self.app.navbar.show_logout_btn() # show logout button in navbar 
+            
+            # show admin page button to user if user has admin role
+            # if not, show my reservations page button
+            if self.app.auth_manager.logged_in_user_role == "Admin":
+                self.app.navbar.show_admin_page_btn()
+            else:
+                self.app.navbar.show_my_res_page_btn()
         
         else: # if not logged in successfully (invalid credentials)
             self.show(message="User with these credentials does not exist.")

@@ -1,40 +1,60 @@
 import tkinter as tk
 
 class Navbar(tk.Frame):
-    def __init__(self, container): # container == root
-        super().__init__(container, width=300, height=800, bg='#A52A2A') # self == navbar
-        self.container = container
+    def __init__(self, app):
+        super().__init__(app, width=300, height=800, bg='#A52A2A')
+        self.app = app
+
+        # put navbar inside app window
         self.grid(row=0, column=0)
         self.grid_propagate(0)
 
-        self.home_btn = tk.Button(self, text="Home", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=self.container.home_page.show)
-        self.home_btn.grid(row=0)
+        # home page button
+        self.home_page_btn = tk.Button(self, text="Home", width=37, height=2, 
+            bg="#A52A2A", fg="white", command=self.app.home_page.show)
+        self.home_page_btn.grid(row=0)
 
-        self.login_btn = tk.Button(self, text="Login", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=self.container.login_page.show)
-        self.login_btn.grid(row=1)
+        # admin page button
+        self.admin_page_btn = tk.Button(self, text ="Admin Page", width=37, height=2, 
+            bg="#A52A2A", fg="white", command=self.app.admin_page.show)
+        self.admin_page_btn.grid(row=1)
 
-        self.logout_btn = tk.Button(self, text="Logout", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=self.container.auth_manager.logout_user)
-        self.logout_btn.grid(row=1)
+        # my reservations page button
+        self.my_res_page_btn = tk.Button(self, text ="My Reservations", width=37, height=2, 
+            bg="#A52A2A", fg="white", command=self.app.my_reservations_page.show)
+        self.my_res_page_btn.grid(row=1)
 
-        self.quit_btn = tk.Button(self, text ="Close Application", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=self.container.destroy)
-        self.quit_btn.grid(row=2)
+        # register page button
+        self.register_page_btn = tk.Button(self, text ="Register", width=37, height=2, 
+            bg="#A52A2A", fg="white", command=self.app.register_page.show)
+        self.register_page_btn.grid(row=1)
+        
+        # logout button
+        self.logout_btn = tk.Button(self, text="Logout", width=37, height=2, bg="#A52A2A", 
+            fg="white", command=self.app.auth_manager.logout_user)
+        self.logout_btn.grid(row=2)
 
-        self.admin_btn = tk.Button(self, text ="Admin Page", width=37, height=2, bg="#A52A2A", fg="white", 
-            command=self.container.admin_page.show)
-        self.admin_btn.grid(row=3)
+        # login page button
+        self.login_page_btn = tk.Button(self, text="Login", width=37, height=2, bg="#A52A2A", 
+            fg="white", command=self.app.login_page.show)
+        self.login_page_btn.grid(row=2)
 
-        self.my_reservations_btn = tk.Button(self, text ="My Reservations", width=37, height=2, 
-            bg="#A52A2A", fg="white", command=self.container.my_reservations_page.show)
-        self.my_reservations_btn.grid(row=4)
+        # exit app button
+        self.exit_app_btn = tk.Button(self, text ="Exit App", width=37, height=2, bg="#A52A2A", fg="white", 
+            command=self.app.destroy)
+        self.exit_app_btn.grid(row=3)
 
-        self.show_login_btn() # on starting the program login button will be shown instead of logout
-
-    def show_login_btn(self):
-        self.login_btn.tkraise()
+    def show_login_page_btn(self):
+        self.login_page_btn.tkraise()
 
     def show_logout_btn(self):
         self.logout_btn.tkraise()
+
+    def show_register_page_btn(self):
+        self.register_page_btn.tkraise()
+
+    def show_admin_page_btn(self):
+        self.admin_page_btn.tkraise()
+
+    def show_my_res_page_btn(self):
+        self.my_res_page_btn.tkraise()
