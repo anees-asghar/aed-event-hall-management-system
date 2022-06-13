@@ -97,6 +97,28 @@ class Database:
         seats = self.cursor.fetchall()
         return seats
 
+    def delete_reservation(self, event_id, seat_num):
+        """
+            Delete reservation with for the given event and seat number from 
+            the reservations table.
+        """
+        self.cursor.execute(
+            "DELETE FROM reservations WHERE event_id = ? AND seat_number = ?;", 
+            [event_id, seat_num]
+        )
+        self.conn.commit()
+    
+    def update_reservation(self, event_id, old_seat_num, new_seat_num):
+        """
+            Update the reservation of a specified event and seat number to have 
+            the new seat number.
+        """
+        self.cursor.execute(
+            "UPDATE reservations SET seat_number = ? WHERE seat_number = ? AND event_id = ?;",
+            [new_seat_num, old_seat_num, event_id]
+        )
+        self.conn.commit()
+
     # def insert_reservations(self, user_id, date, seat_nums):
     #     """
     #         Insert reservations in the reservation table for the 
@@ -145,27 +167,27 @@ class Database:
     #     reservations = self.cursor.fetchall()
     #     return reservations
 
-    def delete_reservation(self, date, seat_num):
-        """
-            Delete reservation with the the given date and seat number from 
-            the reservations table.
-        """
-        self.cursor.execute(
-            "DELETE FROM reservations WHERE date = ? AND seat_number = ?;", 
-            [date, seat_num]
-        )
-        self.conn.commit()
+    # def delete_reservation(self, date, seat_num):
+    #     """
+    #         Delete reservation with the the given date and seat number from 
+    #         the reservations table.
+    #     """
+    #     self.cursor.execute(
+    #         "DELETE FROM reservations WHERE date = ? AND seat_number = ?;", 
+    #         [date, seat_num]
+    #     )
+    #     self.conn.commit()
 
-    def update_reservation(self, date, old_seat_num, new_seat_num):
-        """
-            Update reservation with the the given date and seat number to have 
-            the new seat number in the reservations table.
-        """
-        self.cursor.execute(
-            "UPDATE reservations SET seat_number = ? WHERE seat_number = ? AND date = ?;",
-            [new_seat_num, old_seat_num, date]
-        )
-        self.conn.commit()
+    # def update_reservation(self, date, old_seat_num, new_seat_num):
+    #     """
+    #         Update reservation with the the given date and seat number to have 
+    #         the new seat number in the reservations table.
+    #     """
+    #     self.cursor.execute(
+    #         "UPDATE reservations SET seat_number = ? WHERE seat_number = ? AND date = ?;",
+    #         [new_seat_num, old_seat_num, date]
+    #     )
+    #     self.conn.commit()
 
     def select_user_by_email(self, email):
         """

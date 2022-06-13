@@ -20,9 +20,9 @@ class Navbar(tk.Frame):
         self.admin_page_btn.grid(row=1)
 
         # my reservations page button
-        # self.my_res_page_btn = tk.Button(self, text ="My Reservations", width=37, height=2, 
-        #     bg="#A52A2A", fg="white", command=self.app.my_reservations_page.show)
-        # self.my_res_page_btn.grid(row=1)
+        self.my_res_page_btn = tk.Button(self, text ="My Reservations", width=37, height=2, 
+            bg="#A52A2A", fg="white", command=self.app.my_reservations_page.show)
+        self.my_res_page_btn.grid(row=1)
 
         # register page button
         self.register_page_btn = tk.Button(self, text ="Register", width=37, height=2, 
@@ -56,5 +56,5 @@ class Navbar(tk.Frame):
     def show_admin_page_btn(self):
         self.admin_page_btn.tkraise()
 
-    # def show_my_res_page_btn(self):
-    #     self.my_res_page_btn.tkraise()
+    def show_my_res_page_btn(self):
+        self.my_res_page_btn.tkraise()

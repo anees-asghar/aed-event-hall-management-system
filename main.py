@@ -27,7 +27,7 @@ class App(tk.Tk):
         self.register_page = RegisterPage(self)
         self.login_page = LoginPage(self)
         self.admin_page = AdminPage(self)
-        # self.my_reservations_page = MyReservationsPage(self)
+        self.my_reservations_page = MyReservationsPage(self)
 
         self.navbar = Navbar(self) # create the navbar
 
