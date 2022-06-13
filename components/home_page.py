@@ -1,163 +1,174 @@
 import tkinter as tk
 import tkcalendar as tkcal
-from tkinter import ttk
 from tkinter import messagebox
 
+
 class HomePage(tk.Frame):
-    def __init__(self, container):
-        super().__init__(container, width=1100, height=800)
+    def __init__(self, app):
+        super().__init__(app, width=1100, height=800)
+        self.app = app
 
-        self.container = container
-        self.selected_date = "01/01/22"
-
+        # put home_page inside app window
         self.grid(row=0, column=1)
         self.grid_propagate(False)
 
-        self.title = tk.Label(self, text="Reserve Seats", font=("Arial", 30)) # home page title
-        self.title.place(x=200, y=100)
+        # get event for the default date
+        self.event = self.app.db.get_event_by_date("01/01/22") # event = (id, name, date)
 
-        self.selected_date_label = tk.Label(self, text=f"Selected date: {self.selected_date}", font=("Arial", 14))
-        self.selected_date_label.place(x=200, y=180)
+        # page title
+        self.title_label = tk.Label(self, text="Reserve Seats", font=("Arial", 30))
+        self.title_label.place(x=200, y=100)
 
-        self.calendar = tkcal.Calendar(self, selectmode="day", date=1, month=1, year=2022, date_pattern="dd/mm/yy")# home page calendar
+        # event title label
+        self.event_title_label = tk.Label(self, font=("Arial", 14), text=f"{self.event[1]} | {self.event[2]}")
+        self.event_title_label.place(x=200, y=180)
+
+        # calendar to pick date
+        self.calendar = tkcal.Calendar(self, selectmode="day", date=1, month=1, year=2022, date_pattern="dd/mm/yy")
         self.calendar.place(x=650, y=100)
 
+        # select date button
         self.select_date_btn = tk.Button(self, text="Select Date", command=self.select_date)
         self.select_date_btn.place(x=650, y=320)
 
-        self.seat_grid = SeatGrid(self)
-        self.seat_grid.render(self.selected_date)
+        # create seat grid (hall)
+        self.seat_grid = SeatGrid(self, self.app)
         self.seat_grid.place(x=200, y=400)
+        self.seat_grid.update()
 
-        self.book_seats_btn = tk.Button(self, text="Book", width=7, height=1, bg="#A52A2A", fg="white", command=self.booking_popup)
+        # book seats button
+        self.book_seats_btn = tk.Button(self, text="Book", width=7, height=1, bg="#A52A2A", 
+            fg="white", command=self.confirm_book_seats)
         self.book_seats_btn.place(x=800, y=750)
 
-        #Seat Label
-        self.empty_seat_label = tk.Label(self, text="Empty seat", font=("Georgia"))#empty seat label
-        self.empty_seat_label.place(x=200, y=230) 
-        self.empty_seat_btn = tk.Button(self, text="", width=5, height=1, bg="white",state="disabled")
-        self.empty_seat_btn.place(x=300, y=230)
-    
-        self.seat_taken_label = tk.Label(self, text="Seat Taken", font=("Georgia"))#seat takenlabel
-        self.seat_taken_label.place(x=200, y=260) 
-        self.seat_taken_btn = tk.Button(self, text="", width=5, height=1, bg="red",state="disabled")
-        self.seat_taken_btn.place(x=300, y=260)
-    
-        self.chosen_seat_label = tk.Label(self, text="Chosen seat", font=("Georgia"))#chosen seat label
-        self.chosen_seat_label.place(x=200, y=290) 
-        self.chosen_seat_btn = tk.Button(self, text="", width=5, height=1, bg="green",state="disabled")
-        self.chosen_seat_btn.place(x=300, y=290)
-
-        self.vip_seat_label = tk.Label(self, text="VIP seat", font=("Georgia"))#vip seat label
-        self.vip_seat_label.place(x=200, y=320)
-        self.vip_seat_btn = tk.Button(self, text="👑", width=5, height=1,state="disabled")
-        self.vip_seat_btn.place(x=300, y=320) 
-
-    def booking_popup(self):
-        question = messagebox.askquestion("Confirmation","Are you sure you want to buy this ticket/s?")
-        if question == "yes": self.book_selected_seats()  
-           
-
     def select_date(self):
-        if self.selected_date == self.calendar.get_date():
-            return
+        date = self.calendar.get_date() # get date from calendar
+
+        # CHECK TO SEE IF A VALID DATE IS SELECTED
+        if self.event[2] == date: return # return if the same date was selected
         
-        self.selected_date = self.calendar.get_date()
-        self.selected_date_label.configure(text=f"Selected date: {self.selected_date}")
-        self.seat_grid.render(self.selected_date)
+        self.event = self.app.db.get_event_by_date(date) # update event
+        self.event_title_label.configure(text=f"{self.event[1]} | {self.event[2]}") # update event label
+        self.seat_grid.update() # update seat grid
+
+    def confirm_book_seats(self):
+        response = messagebox.askquestion(
+            "Confirmation", 
+            "Are you sure you want to book the selected seats?"
+            )
+        if response == "yes": self.book_selected_seats()
 
     def book_selected_seats(self):
-        if not self.seat_grid.selected_seats:
-            return
+        # ADD AN ERROR MESSAGE IF NO SEATS ARE SELECTED
+        if not self.seat_grid.selected_seats: return # return if no seats are selected
         
-        logged_in_user_id = self.container.auth_manager.logged_in_user_id
-        if not logged_in_user_id: # no user is logged in
-            self.container.login_page.show(message="Please login first.", message_color="green")
-            return
+        user_id = self.app.auth_manager.logged_in_user_id # get logged in user id
         
-        self.container.db.insert_reservations(logged_in_user_id, self.selected_date, self.seat_grid.selected_seats)
-        self.seat_grid.render(self.selected_date)
+        if not user_id: # no user is logged in
+            self.app.login_page.show(message="Please login first.") # redirect to login page with message
+            return
+
+        # make reservations for the selected seats
+        self.app.db.insert_reservations(
+            user_id, 
+            event_id=self.event[0], 
+            seat_nums=self.seat_grid.selected_seats
+        )
+        
+        self.seat_grid.update() # update seat grid
 
     def show(self):
-        self.seat_grid.render(self.selected_date)
-        self.tkraise()
-        
+        self.seat_grid.update() # update seat grid
+        self.tkraise()          # raise home page
+
+
+class SeatButton(tk.Button):
+    def __init__(self, seat_grid, seat_num):
+        super().__init__(seat_grid, text=seat_num, width=5, height=1)
+        self.seat_num = seat_num
+        self.seat_grid = seat_grid
+
+    def change_to_selected(self):
+        self.configure(bg="yellow")                         # change button appearance
+        self.configure(command=self.change_to_open)         # change button command
+        self.seat_grid.selected_seats.add(self.seat_num)    # add seat number to selected
+    
+    def change_to_open(self):
+        self.configure(bg="white")                          # change button appearance
+        self.configure(command=self.change_to_selected)     # change button command
+        self.seat_grid.selected_seats.remove(self.seat_num) # remove seat number from selected
+
 
 class SeatGrid(tk.Frame):
-    def __init__(self, container):
-        super().__init__(container, width=400, height=200)
-        self.container = container
-        self.buttons = {} # button of a particular seat can be accessed by self.buttons[<seat_number>]
-        self.selected_seats = set()
-    
-    def render(self, date):
-        self.selected_seats.clear() # clear selected seats when grid is re-rendered
+    def __init__(self, home_page, app):
+        super().__init__(home_page, width=400, height=200)
+        self.app = app
+        self.home_page = home_page
+        self.seat_buttons = {} # seat numbers are keys and SeatButton instaces are values
+        self.selected_seats = set() # the set of selected seats
 
-        logged_in_user_id = self.container.container.auth_manager.logged_in_user_id
-        reservations = self.container.container.db.select_reservations_by_date(date)
-        reserved_seats_data = {seat_num: {"owner_id": user_id} for _, user_id, _, seat_num in reservations}
-
-        cols = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11','12','13','14']
+        cols = [str(i) for i in range(1, 15)]
         rows = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
-        seats_to_ignore = ['3F','4F','5F','10F','11F','12F','3A','4A','5A','10A','11A','12A'] # seats that dont exist in the hall
         
         for i, r in enumerate(rows):
             for j, c in enumerate(cols):
-                seat_num = c+r # for example 1A
-                
-                if seat_num in seats_to_ignore: # ignore the seat_num for which button isn't needed
-                    continue 
+                seat_num = c+r # for example 1K
 
-                if seat_num in reserved_seats_data.keys(): # if the seat is reserved
+                # ignore invalid seats (seats that are not in hall)
+                if seat_num in ['3F','4F','5F','10F','11F','12F','3A','4A','5A','10A','11A','12A']: continue 
 
-                    if reserved_seats_data[seat_num]["owner_id"] == logged_in_user_id: # seat owned by logged in user
-                        self.buttons[seat_num] = self.OwnedSeatButton(self, seat_num)
-                    else: # seat owned by different user
-                        self.buttons[seat_num] = self.ReservedSeatButton(self, seat_num)
-                        
-                else: # if the seat is not reserved
-                    self.buttons[seat_num] = self.OpenSeatButton(self, seat_num)
+                # create a button for this seat number
+                self.seat_buttons[seat_num] = SeatButton(self, seat_num)
 
                 # place the button created in the grid
+                # there are gaps between some rows and cols in hall layout for which we use padx & pady
                 if c in ['2', '12'] and r in ['B', 'F']: # row spacing and column spacing needed
-                    self.buttons[seat_num].grid(row=i, column=j, padx=(0, 20), pady=(0, 20))
+                    self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20), pady=(0, 20))
+
                 elif c in ['2', '12']: # only column spacing needed
-                    self.buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
+                    self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
+
                 elif r in ['B', 'F']: # only row spacing needed
-                    self.buttons[seat_num].grid(row=i, column=j, pady=(0, 20))
+                    self.seat_buttons[seat_num].grid(row=i, column=j, pady=(0, 20))
+
                 else: # no spacing needed
-                    self.buttons[seat_num].grid(row=i, column=j)
-    
-        # decorate VIP seats differently
-        for n in ["6F", "7F", "8F", "9F", "6A", "7A", "8A", "9A"]:
-            self.buttons[n].configure(text="👑")
+                    self.seat_buttons[seat_num].grid(row=i, column=j)
+
+    def update(self):
+        self.selected_seats.clear() # clear selected seats
         
-    class OpenSeatButton(tk.Button):
-        def __init__(self, container, seat_num):
-            super().__init__(container, text=seat_num, width=5, height=1, bg="white", command=self.change_to_selected)
-            self.seat_num = seat_num
-            self.container = container
+        event_id = self.home_page.event[0] # extract the event id
+        reservations = self.app.db.select_reservations_by_event_id(event_id) # get reservations for event
+        logged_in_user_id = self.app.auth_manager.logged_in_user_id # extract the logged in user id
 
-        def change_to_selected(self):
-            # change button appearance
-            self.configure(bg="yellow")
-            self.configure(command=self.change_to_open) # change button command
+        owned_seat_nums = []    # seats owned by user
+        reserved_seat_nums = [] # seats owned by other users
 
-            # add seat number to selected
-            self.container.selected_seats.add(self.seat_num) # seat_grid == self.container
-        
-        def change_to_open(self):
-            # change button appearance
-            self.configure(bg="white")
-            self.configure(command=self.change_to_selected)
+        # fill the lists above
+        for _, user_id, _, seat_num in reservations:
+            if user_id == logged_in_user_id: owned_seat_nums.append(seat_num)
+            else: reserved_seat_nums.append(seat_num)
 
-            # remove seat number from selected
-            self.container.selected_seats.remove(self.seat_num)
-
-    class ReservedSeatButton(tk.Button):
-        def __init__(self, container, seat_num):
-            super().__init__(container, text=seat_num, width=5, height=1, bg="red", fg="white")
-
-    class OwnedSeatButton(tk.Button):
-        def __init__(self, container, seat_num):
-            super().__init__(container, text=seat_num, width=5, height=1, bg="green", fg="white")
+        # give the SeatButton for each seat number different properties based on its status
+        for seat_num in self.seat_buttons.keys():
+            # if owned by user
+            if seat_num in owned_seat_nums:
+                self.seat_buttons[seat_num].configure(
+                    bg="green",
+                    fg="white",
+                    command=lambda: None
+                )
+            # if owned by some other user
+            elif seat_num in reserved_seat_nums:
+                self.seat_buttons[seat_num].configure(
+                    bg="red",
+                    fg="white",
+                    command=lambda: None
+                )
+            # if open to book
+            else:
+                self.seat_buttons[seat_num].configure(
+                    bg="white",
+                    fg="black",
+                    command=self.seat_buttons[seat_num].change_to_selected
+                )

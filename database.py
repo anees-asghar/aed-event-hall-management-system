@@ -5,6 +5,33 @@ class Database:
         self.conn = sqlite3.connect(database_name)
         self.cursor = self.conn.cursor()
 
+    def get_event_by_date(self, date):
+        self.cursor.execute(
+            "SELECT * FROM events WHERE date = ?;", [date] 
+        )
+        event = self.cursor.fetchone()
+        return event
+
+    def insert_reservations(self, user_id, event_id, seat_nums):
+        """
+            Insert reservations in the reservation table for the 
+            specified seat numbers, event and user.
+        """
+        for seat_num in seat_nums: # make reservation for each seat in the set
+            self.cursor.execute(
+                "INSERT INTO reservations (user_id, event_id, seat_number) VALUES (?, ?, ?);",
+                [user_id, event_id, seat_num]
+            )
+        self.conn.commit() # commit database changes
+
+    def select_reservations_by_event_id(self, event_id):
+        self.cursor.execute(
+            "SELECT * FROM reservations WHERE event_id = ?;",
+            [event_id]
+        )
+        reservations = self.cursor.fetchall()
+        return reservations
+
     def select_seats_by_type(self, type):
         """ Select seats by type from seats table. """
         self.cursor.execute(
@@ -19,21 +46,21 @@ class Database:
         seats = self.cursor.fetchall()
         return seats
 
-    def insert_reservations(self, user_id, date, seat_nums):
-        """
-            Insert reservations in the reservation table for the 
-            specified seat numbers, date and user.
-        """
-        for seat_num in seat_nums: # make reservation for each seat in the set
-            self.cursor.execute(
-                "INSERT INTO reservations (user_id, date, seat_number) VALUES (:user_id, :date, :seat_number)",
-                {
-                    "user_id": user_id,
-                    "date": date,
-                    "seat_number": seat_num
-                }
-            )
-        self.conn.commit() # commit database changes
+    # def insert_reservations(self, user_id, date, seat_nums):
+    #     """
+    #         Insert reservations in the reservation table for the 
+    #         specified seat numbers, date and user.
+    #     """
+    #     for seat_num in seat_nums: # make reservation for each seat in the set
+    #         self.cursor.execute(
+    #             "INSERT INTO reservations (user_id, date, seat_number) VALUES (:user_id, :date, :seat_number)",
+    #             {
+    #                 "user_id": user_id,
+    #                 "date": date,
+    #                 "seat_number": seat_num
+    #             }
+    #         )
+    #     self.conn.commit() # commit database changes
 
     def select_reservations_by_date(self, date):
         """
