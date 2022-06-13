@@ -32,6 +32,57 @@ class Database:
         reservations = self.cursor.fetchall()
         return reservations
 
+    def select_reservations_by_day(self, day, month, year):
+        self.cursor.execute(
+            """
+                SELECT r.id, st.type, st.value FROM reservations r
+                JOIN events e
+                ON r.event_id = e.id
+                JOIN seats s
+                ON r.seat_number = s.seat_number
+                JOIN seat_types st
+                ON s.seat_type = st.type
+                WHERE date = ?;
+            """,
+            [f"{day}/{month}/{year}"]
+        )
+        reservations = self.cursor.fetchall()
+        return reservations
+
+    def select_reservations_by_month(self, month, year):
+        self.cursor.execute(
+            """
+                SELECT r.id, st.type, st.value FROM reservations r
+                JOIN events e
+                ON r.event_id = e.id
+                JOIN seats s
+                ON r.seat_number = s.seat_number
+                JOIN seat_types st
+                ON s.seat_type = st.type
+                WHERE date LIKE ?;
+            """,
+            [f"%/{month}/{year}"]
+        )
+        reservations = self.cursor.fetchall()
+        return reservations
+
+    def select_reservations_by_year(self, year):
+        self.cursor.execute(
+            """
+                SELECT r.id, st.type, st.value FROM reservations r
+                JOIN events e
+                ON r.event_id = e.id
+                JOIN seats s
+                ON r.seat_number = s.seat_number
+                JOIN seat_types st
+                ON s.seat_type = st.type
+                WHERE date LIKE ?;
+            """,
+            [f"%/{year}"]
+        )
+        reservations = self.cursor.fetchall()
+        return reservations
+
     def select_seats_by_type(self, type):
         """ Select seats by type from seats table. """
         self.cursor.execute(
@@ -62,37 +113,37 @@ class Database:
     #         )
     #     self.conn.commit() # commit database changes
 
-    def select_reservations_by_date(self, date):
-        """
-            Select and return the reservations of a specified date from the reservations table.
-        """
-        self.cursor.execute(
-            "SELECT * FROM reservations WHERE date = :date;", {"date": date}
-        )
-        reservations = self.cursor.fetchall()
-        return reservations
+    # def select_reservations_by_date(self, date):
+    #     """
+    #         Select and return the reservations of a specified date from the reservations table.
+    #     """
+    #     self.cursor.execute(
+    #         "SELECT * FROM reservations WHERE date = :date;", {"date": date}
+    #     )
+    #     reservations = self.cursor.fetchall()
+    #     return reservations
 
-    def select_reservations_by_month(self, month, year):
-        """
-            Select and return the reservations belonging to the specific month and
-            year from the reservations table.
-        """
-        self.cursor.execute(
-            "SELECT * FROM reservations WHERE date LIKE ?;", [f'%/{month}/{year}'] 
-        )
-        reservations = self.cursor.fetchall()
-        return reservations
+    # def select_reservations_by_month(self, month, year):
+    #     """
+    #         Select and return the reservations belonging to the specific month and
+    #         year from the reservations table.
+    #     """
+    #     self.cursor.execute(
+    #         "SELECT * FROM reservations WHERE date LIKE ?;", [f'%/{month}/{year}'] 
+    #     )
+    #     reservations = self.cursor.fetchall()
+    #     return reservations
 
-    def select_reservations_by_year(self, year):
-        """
-            Select and return the reservations belonging to the specific year from 
-            the reservations table.
-        """
-        self.cursor.execute(
-            "SELECT * FROM reservations WHERE date LIKE ?;", [f'%/{year}'] 
-        )
-        reservations = self.cursor.fetchall()
-        return reservations
+    # def select_reservations_by_year(self, year):
+    #     """
+    #         Select and return the reservations belonging to the specific year from 
+    #         the reservations table.
+    #     """
+    #     self.cursor.execute(
+    #         "SELECT * FROM reservations WHERE date LIKE ?;", [f'%/{year}'] 
+    #     )
+    #     reservations = self.cursor.fetchall()
+    #     return reservations
 
     def delete_reservation(self, date, seat_num):
         """
