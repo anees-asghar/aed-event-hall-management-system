@@ -9,8 +9,7 @@ class MyReservationsPage(tk.Frame):
         self.app = app
 
         # put home_page inside app window
-        self.grid(row=0, column=1)
-        self.grid_propagate(False)
+        self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
 
         # get event for the default date
         self.event = self.app.db.get_event_by_date("01/01/22") # event = (id, name, date)

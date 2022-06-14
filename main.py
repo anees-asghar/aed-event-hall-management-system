@@ -16,7 +16,6 @@ class App(tk.Tk):
     def __init__(self, db_name):
         super().__init__()
         self.geometry("1400x800")           # set window dimensions
-        self.resizable(False, False)        # make window unresizable
         self.title("Reservation System")    # set window title
 
         self.db = Database(db_name)               # connect to database

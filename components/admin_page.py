@@ -9,8 +9,7 @@ class AdminPage(tk.Frame):
         self.app = app
 
         # put admin page in the app window
-        self.grid(row=0, column=1)
-        self.grid_propagate(False)
+        self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
 
         # page title
         self.title_label = tk.Label(self, text="Admin Page", font=("Arial", 30))
