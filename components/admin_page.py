@@ -5,41 +5,48 @@ from tkinter import ttk
 
 class AdminPage(tk.Frame):
     def __init__(self, app):
-        super().__init__(app, width=1100, height=800)
+        super().__init__(app, bg="#F1EEE9")
         self.app = app
 
         # put admin page in the app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
 
         # page title
-        self.title_label = tk.Label(self, text="Admin Page", font=("Arial", 30))
-        self.title_label.place(x=200, y=100)
-
-        # page sub title
-        self.sales_by_label = tk.Label(self, text="Sales by:", font=("Arial", 20)) 
-        self.sales_by_label.place(x=200, y=200)
+        self.title_label = tk.Label(self, text="Admin Page", bg="#F1EEE9", font=("Helvetica", 30))
+        self.title_label.place(relx=0, rely=0, relwidth=1, relheight=0.25)
 
 
-        # --- OPTION SELECT AREA (sales by day, month or year) ---
+        # --- SELECT OPTION AREA (sales by day, month or year) ---
+
         self.radio_btn_val = tk.IntVar() # stores the value of the selected radio button
 
-        # day radio button
-        self.day_radio = tk.Radiobutton(self, variable=self.radio_btn_val, value=0, text="Day", 
-            command=self.day_radio_selected)
-        self.day_radio.place(x=200, y=300)
+        # select option frame
+        select_option_frame = tk.Frame(self, bg="#F1EEE9")
+        select_option_frame.place(relx=0, rely=0.25, relwidth=1, relheight=0.15)
 
-        # month radio button
-        self.month_radio = tk.Radiobutton(self, variable=self.radio_btn_val, value=1, text="Month", 
-            command=self.month_radio_selected)
-        self.month_radio.place(x=400, y=300)
+        # select option label
+        self.select_option_label = tk.Label(select_option_frame, text="Sales data by:", 
+            bg="#F1EEE9", font=("Helvetica")) 
+        self.select_option_label.place(relx=0.2, rely=0.5, relwidth=0.15, anchor="w")
+
+        # day option radio button
+        self.day_radio = tk.Radiobutton(select_option_frame, variable=self.radio_btn_val, value=0, text="Day", 
+            font=("Helvetica"), bg="#F1EEE9", command=self.day_radio_selected)
+        self.day_radio.place(relx=0.35, rely=0.5, relwidth=0.15, anchor="w")
+
+        # month option radio button
+        self.month_radio = tk.Radiobutton(select_option_frame, variable=self.radio_btn_val, value=1, text="Month", 
+            font=("Helvetica"), bg="#F1EEE9", command=self.month_radio_selected)
+        self.month_radio.place(relx=0.5, rely=0.5, relwidth=0.15, anchor="w")
         
-        # year radio button
-        self.radio_year_btn = tk.Radiobutton(self, variable=self.radio_btn_val, value=2, text="Year", 
-            command=self.year_radio_selected)
-        self.radio_year_btn.place(x=600, y=300)
+        # year option radio button
+        self.radio_year_btn = tk.Radiobutton(select_option_frame, variable=self.radio_btn_val, value=2, text="Year", 
+            font=("Helvetica"), bg="#F1EEE9", command=self.year_radio_selected)
+        self.radio_year_btn.place(relx=0.65, rely=0.5, relwidth=0.15, anchor="w")
 
 
-        # --- DATE PICKING AREA ---
+        # --- SELECT DATE AREA ---
+
         days = [i for i in range(1, 31+1)]
         self.months = [
             "January", "February", "March", "April", "May", "June", "July", 
@@ -47,43 +54,57 @@ class AdminPage(tk.Frame):
         ]
         years = ["2022","2023"]
 
+        # select date frame
+        select_date_frame = tk.Frame(self, bg="#F1EEE9")
+        select_date_frame.place(relx=0, rely=0.40, relwidth=1, relheight=0.1)
+
         # combo box for day
-        self.day_combo = ttk.Combobox(self, value=days, state="readonly")
+        self.day_combo = ttk.Combobox(select_date_frame, value=days, state="readonly")
         self.day_combo.current(0)
-        self.day_combo.place(x=200, y=350)
+        self.day_combo.place(relx=0.1, rely=0, relheight=0.5, relwidth=0.2)
 
         # combo box for month
-        self.month_combo = ttk.Combobox(self, value=self.months, state="readonly")
+        self.month_combo = ttk.Combobox(select_date_frame, value=self.months, state="readonly")
         self.month_combo.current(0)
-        self.month_combo.place(x=400, y=350)
+        self.month_combo.place(relx=0.3, rely=0, relheight=0.5, relwidth=0.2)
         
         # combo box for year
-        self.year_combo = ttk.Combobox(self, value=years, state="readonly")
+        self.year_combo = ttk.Combobox(select_date_frame, value=years, state="readonly")
         self.year_combo.current(0)
-        self.year_combo.place(x=600, y=350)
+        self.year_combo.place(relx=0.5, rely=0, relheight=0.5, relwidth=0.2)
         
         # select date button
-        self.select_date_btn = tk.Button(self, text="Select Date", command=self.display_stats)
-        self.select_date_btn.place(x=800, y=340)
+        self.select_date_btn = tk.Button(select_date_frame, text="Select Date", relief="groove", 
+            bg="#EC994B", fg="black", command=self.display_stats)
+        self.select_date_btn.place(relx=0.7, rely=0, relheight=0.5, relwidth=0.2)
 
         # error label
-        self.error_label = tk.Label(self, text="", fg="red", font=("Arial"))
-        self.error_label.place(x=200, y=400) 
+        self.error_label = tk.Label(select_date_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
+        self.error_label.place(relx=0.1, rely=0.5) 
 
 
         # --- DISPLAY STATS AREA ---
-        self.date_label = tk.Label(self, font=("Arial", 12), text="")
-        self.date_label.place(x=200, y=450)
 
-        self.total_tickets_sold_label = tk.Label(self, font=("Arial", 12), text="")
-        self.total_tickets_sold_label.place(x=200, y=500)
+        # display stats frame
+        display_stats_frame = tk.Frame(self, bg="#F1EEE9")
+        display_stats_frame.place(relx=0, rely=0.5, relwidth=1, relheight=0.4)
 
-        self.vip_tickets_sold_label = tk.Label(self, font=("Arial", 12), text="")
-        self.vip_tickets_sold_label.place(x=200, y=550)
+        # statistics label 
+        self.stats_label = tk.Label(display_stats_frame, bg="#F1EEE9", font=("Helvetica", 20), text="")
+        self.stats_label.place(relx=0.2, rely=0, relheight=0.4)
+        
+        # total tickets sold label
+        self.total_tickets_sold_label = tk.Label(display_stats_frame, bg="#F1EEE9", font=("Helvetica"), text="")
+        self.total_tickets_sold_label.place(relx=0.2, rely=0.4, relheight=0.2)
 
-        self.total_tickets_value_label = tk.Label(self, font=("Arial", 12), text="")
-        self.total_tickets_value_label.place(x=200, y=600)
-       
+        # vip tickets sold label
+        self.vip_tickets_sold_label = tk.Label(display_stats_frame, bg="#F1EEE9", font=("Helvetica"), text="")
+        self.vip_tickets_sold_label.place(relx=0.2, rely=0.6, relheight=0.2)
+
+        # total tickets value label
+        self.total_tickets_value_label = tk.Label(display_stats_frame, bg="#F1EEE9", font=("Helvetica"), text="")
+        self.total_tickets_value_label.place(relx=0.2, rely=0.8, relheight=0.2)
+
 
         self.display_stats() # display stats for the default date
   
@@ -135,15 +156,15 @@ class AdminPage(tk.Frame):
                 return
             
             reservations = self.app.db.select_reservations_by_day(day_db, month_db, year_db)
-            self.date_label.configure(text=f"Date: {day} {month} {year}")
+            self.stats_label.configure(text=f"Statistics | {day} {month} {year}")
 
         elif option_selected == 1: # user requested data by month
             reservations = self.app.db.select_reservations_by_month(month_db, year_db)
-            self.date_label.configure(text=f"Date: {month} {year}")
+            self.stats_label.configure(text=f"Statistics | {month} {year}")
             
         elif option_selected == 2: # user requested data by year
             reservations = self.app.db.select_reservations_by_year(year_db)
-            self.date_label.configure(text=f"Date: {year}")
+            self.stats_label.configure(text=f"Statistics | {year}")
         
         total_tickets_sold, vip_tickets_sold, total_tickets_value = self.generate_stats(reservations)
 
