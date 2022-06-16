@@ -86,7 +86,7 @@ class Database:
     def select_seats_by_type(self, type):
         """ Select seats by type from seats table. """
         self.cursor.execute(
-            "SELECT * FROM seats WHERE type = ?;", [type] 
+            "SELECT * FROM seats WHERE seat_type = ?;", [type] 
         )
         seats = self.cursor.fetchall()
         return seats

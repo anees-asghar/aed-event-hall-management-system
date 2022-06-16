@@ -179,6 +179,11 @@ class SeatGrid(tk.Frame):
 
                 else: # no spacing needed
                     self.seat_buttons[seat_num].grid(row=i, column=j)
+        
+        # decorate VIP seats differently
+        vip_seats = [seat_num for (_, seat_num, _) in self.app.db.select_seats_by_type("VIP")]
+        for n in vip_seats:
+            self.seat_buttons[n].configure(text="👑")
 
     def update(self):
         self.selected_seat_num = "" # clear selected seats

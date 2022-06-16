@@ -41,7 +41,7 @@ class Navbar(tk.Frame):
         # exit app button
         self.exit_app_btn = tk.Button(self, text ="Exit App", width=37, height=2, bg="#A52A2A", fg="white", 
             command=self.app.destroy)
-        self.logout_btn.place(relx=0, rely=0.24, relwidth=1, relheight=0.08)
+        self.exit_app_btn.place(relx=0, rely=0.24, relwidth=1, relheight=0.08)
 
     def show_login_page_btn(self):
         self.login_page_btn.tkraise()
