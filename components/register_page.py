@@ -10,7 +10,7 @@ class RegisterPage(tk.Frame):
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
 
         register_form_frame = tk.Frame(self, bg="#F1EEE9")
-        register_form_frame.place(relx=0.5, rely=0.5, relheight=0.5, relwidth=0.5, anchor="center")
+        register_form_frame.place(relx=0.5, rely=0.2, relheight=0.5, relwidth=0.5, anchor="n")
 
         # page title
         self.title_label = tk.Label(register_form_frame, text="Register", bg="#F1EEE9", font=("Helvetica", 30))
@@ -46,8 +46,8 @@ class RegisterPage(tk.Frame):
 
         # register button
         self.register_btn = tk.Button(register_form_frame, text="Submit", width=10, height=1, 
-            bg="#EC994B", command= self.submit_data)
-        self.register_btn.place(relx=0.7, rely=0.9, relheight=0.1, relwidth=0.3)
+            bg="#EC994B", relief="flat", command= self.submit_data)
+        self.register_btn.place(relx=0.8, rely=0.9, relheight=0.1, relwidth=0.2)
     
     def submit_data(self):
         # get data from the input fields
