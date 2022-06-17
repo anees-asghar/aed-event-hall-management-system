@@ -16,45 +16,45 @@ class MyReservationsPage(tk.Frame):
 
         # page title
         self.title_label = tk.Label(self, text="My Reservations", font=("Arial", 30))
-        self.title_label.place(x=200, y=100)
+        self.title_label.place(relx=0.10, rely=0.10, relwidth=0.3, relheight=0.06)
 
         # event title label
         self.event_title_label = tk.Label(self, font=("Arial", 14), text=f"{self.event[1]} | {self.event[2]}")
-        self.event_title_label.place(x=200, y=180)
+        self.event_title_label.place(relx=0.10, rely=0.20, relwidth=0.3, relheight=0.06)
 
         # calendar to pick date
         self.calendar = tkcal.Calendar(self, selectmode="day", date=1, month=1, year=2022, date_pattern="dd/mm/yy")
-        self.calendar.place(x=650, y=100)
+        self.calendar.place(relx=0.65, rely=0.10, relwidth=0.20, relheight=0.25)
 
         # select date button
         self.select_date_btn = tk.Button(self, text="Select Date", command=self.select_date)
-        self.select_date_btn.place(x=650, y=320)
+        self.select_date_btn.place(relx=0.65, rely=0.35, relwidth=0.20, relheight=0.04)
 
         # error label
         self.error_label = tk.Label(self, text="", fg="red", font=("Arial"))
-        self.error_label.place(x=200, y=360) 
+        self.error_label.place(relx=0.10, rely=0.40, relwidth=0.3, relheight=0.06)
 
         # create seat grid (hall layout)
         self.seat_grid = SeatGrid(self, self.app)
-        self.seat_grid.place(x=200, y=400)
+        self.seat_grid.place(relx=0.20, rely=0.5,relwidth=0.70, relheight=0.45)
         self.seat_grid.update()
 
         # book seats button
         self.update_seat_label = tk.Label(self, text="New seat number:")
-        self.update_seat_label.place(x=400, y=750)
+        self.update_seat_label.place(relx=0.26, rely=0.28, relwidth=0.1, relheight=0.03)
 
         self.all_seat_nums = [s[1] for s in  self.app.db.select_all_seats()]
         self.update_seat_num_combo = ttk.Combobox(self, width=20, value=self.all_seat_nums, state="readonly")
         self.update_seat_num_combo.current(0)
-        self.update_seat_num_combo.place(x=600, y=750)
+        self.update_seat_num_combo.place(relx=0.36, rely=0.28, relwidth=0.08, relheight=0.03)
     
         self.update_seat_num_btn = tk.Button(self, text="Update", width=7, height=1, bg="#A52A2A", fg="white", 
             command=self.update_reservation)
-        self.update_seat_num_btn.place(x=800, y=750)
+        self.update_seat_num_btn.place(relx=0.16, rely=0.28, relwidth=0.08, relheight=0.03)
 
         self.delete_seat_btn = tk.Button(self, text="Unbook", width=7, height=1, bg="#A52A2A", fg="white", 
             command=self.delete_reservation)
-        self.delete_seat_btn.place(x=900, y=750)
+        self.delete_seat_btn.place(relx=0.16, rely=0.35, relwidth=0.08, relheight=0.03)
 
     def select_date(self):
         date = self.calendar.get_date() # get date from calendar
