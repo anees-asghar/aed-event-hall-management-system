@@ -14,11 +14,11 @@ class RegisterPage(tk.Frame):
 
         # page title
         self.title_label = tk.Label(register_form_frame, text="Register", bg="#F1EEE9", font=("Helvetica", 30))
-        self.title_label.place(relx=0, rely=0, relheight=0.2, relwidth=1)
+        self.title_label.place(relx=0, rely=0, relheight=0.3, relwidth=1)
 
         # error message label (empty on startup)
         self.error_label = tk.Label(register_form_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
-        self.error_label.place(relx=0, rely=0.2, relheight=0.05, relwidth=0.4) 
+        self.error_label.place(relx=0, rely=0.9, relheight=0.1) 
 
         # first name label and entry field
         self.first_name = tk.Label(register_form_frame, text="First Name:", bg="#F1EEE9", font=("Helvetica", 11))
