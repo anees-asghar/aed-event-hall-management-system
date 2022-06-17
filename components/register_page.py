@@ -21,27 +21,28 @@ class RegisterPage(tk.Frame):
         self.error_label.place(relx=0, rely=0.2, relheight=0.05, relwidth=0.4) 
 
         # first name label and entry field
-        self.first_name = tk.Label(register_form_frame, text="First Name:", bg="#F1EEE9", font=("Helvetica"))
-        self.first_name.place(relx=0, rely=0.3, relheight=0.1, relwidth=0.2)
-        self.first_name_entry = tk.Entry(register_form_frame) 
+        self.first_name = tk.Label(register_form_frame, text="First Name:", bg="#F1EEE9", font=("Helvetica", 11))
+        self.first_name.place(relx=0, rely=0.3, relheight=0.1)
+        self.first_name_entry = tk.Entry(register_form_frame, font=("Helvetica", 10), borderwidth=5, relief="flat") 
         self.first_name_entry.place(relx=0.4, rely=0.3, relheight=0.1, relwidth=0.6)
+        self.first_name_entry.focus_set()
 
         # last name label and entry field
-        self.last_name_label  = tk.Label(register_form_frame, text="Last Name:", bg="#F1EEE9", font=("Helvetica"))
-        self.last_name_label.place(relx=0, rely=0.45, relheight=0.1, relwidth=0.2)
-        self.last_name_entry = tk.Entry(register_form_frame)
+        self.last_name_label  = tk.Label(register_form_frame, text="Last Name:", bg="#F1EEE9", font=("Helvetica", 11))
+        self.last_name_label.place(relx=0, rely=0.45, relheight=0.1)
+        self.last_name_entry = tk.Entry(register_form_frame, font=("Helvetica", 10), borderwidth=5, relief="flat")
         self.last_name_entry.place(relx=0.4, rely=0.45, relheight=0.1, relwidth=0.6)
 
         # email label and entry field
-        self.email_label = tk.Label(register_form_frame, text="Email:", bg="#F1EEE9", font=("Helvetica"))
-        self.email_label.place(relx=0, rely=0.6, relheight=0.1, relwidth=0.2)
-        self.email_entry= tk.Entry(register_form_frame)
+        self.email_label = tk.Label(register_form_frame, text="Email:", bg="#F1EEE9", font=("Helvetica", 11))
+        self.email_label.place(relx=0, rely=0.6, relheight=0.1)
+        self.email_entry= tk.Entry(register_form_frame, font=("Helvetica", 10), borderwidth=5, relief="flat")
         self.email_entry.place(relx=0.4, rely=0.6, relheight=0.1, relwidth=0.6)
 
         # password label and entry field
-        self.password_label = tk.Label(register_form_frame, text="Password:", bg="#F1EEE9", font=("Helvetica"))
-        self.password_label.place(relx=0, rely=0.75, relheight=0.1, relwidth=0.2)
-        self.password_entry = tk.Entry(register_form_frame, show="*")
+        self.password_label = tk.Label(register_form_frame, text="Password:", bg="#F1EEE9", font=("Helvetica", 11))
+        self.password_label.place(relx=0, rely=0.75, relheight=0.1)
+        self.password_entry = tk.Entry(register_form_frame, font=("Helvetica", 10), borderwidth=5, relief="flat", show="*")
         self.password_entry.place(relx=0.4, rely=0.75, relheight=0.1, relwidth=0.6)
 
         # register button
