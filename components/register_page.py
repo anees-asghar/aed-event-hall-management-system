@@ -3,48 +3,51 @@ import tkinter as tk
 
 class RegisterPage(tk.Frame):
     def __init__(self, app):
-        super().__init__(app, width=1100, height=800)
+        super().__init__(app, bg="#F1EEE9")
         self.app = app
 
         # put register page inside app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
 
+        register_form_frame = tk.Frame(self, bg="#F1EEE9")
+        register_form_frame.place(relx=0.5, rely=0.5, relheight=0.5, relwidth=0.5, anchor="center")
+
         # page title
-        self.title_label = tk.Label(self, text="Register", font=("Arial", 30))
-        self.title_label.place(x=200, y=100)
+        self.title_label = tk.Label(register_form_frame, text="Register", bg="#F1EEE9", font=("Helvetica", 30))
+        self.title_label.place(relx=0, rely=0, relheight=0.2, relwidth=1)
 
         # error message label (empty on startup)
-        self.error_label = tk.Label(self, text="", fg="red", font=("Arial"))
-        self.error_label.place(x=200, y=170) 
+        self.error_label = tk.Label(register_form_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
+        self.error_label.place(relx=0, rely=0.2, relheight=0.05, relwidth=0.4) 
 
         # first name label and entry field
-        self.first_name = tk.Label(self, text="First Name:", font=("Arial", 10))
-        self.first_name.place(x=200, y=210)
-        self.first_name_entry = tk.Entry(self, width=50) 
-        self.first_name_entry.place(x=200, y=230)
+        self.first_name = tk.Label(register_form_frame, text="First Name:", bg="#F1EEE9", font=("Helvetica"))
+        self.first_name.place(relx=0, rely=0.3, relheight=0.1, relwidth=0.2)
+        self.first_name_entry = tk.Entry(register_form_frame) 
+        self.first_name_entry.place(relx=0.4, rely=0.3, relheight=0.1, relwidth=0.6)
 
         # last name label and entry field
-        self.last_name_label  = tk.Label(self, text="Last Name:", font=("Arial", 10))
-        self.last_name_label.place(x=200, y=260)
-        self.last_name_entry = tk.Entry(self, width=50)
-        self.last_name_entry.place(x=200, y=280)
+        self.last_name_label  = tk.Label(register_form_frame, text="Last Name:", bg="#F1EEE9", font=("Helvetica"))
+        self.last_name_label.place(relx=0, rely=0.45, relheight=0.1, relwidth=0.2)
+        self.last_name_entry = tk.Entry(register_form_frame)
+        self.last_name_entry.place(relx=0.4, rely=0.45, relheight=0.1, relwidth=0.6)
 
         # email label and entry field
-        self.email_label = tk.Label(self, text="Email:", font=("Arial", 10))
-        self.email_label.place(x=200, y=310)
-        self.email_entry= tk.Entry(self, width=50)
-        self.email_entry.place(x=200, y=330)
+        self.email_label = tk.Label(register_form_frame, text="Email:", bg="#F1EEE9", font=("Helvetica"))
+        self.email_label.place(relx=0, rely=0.6, relheight=0.1, relwidth=0.2)
+        self.email_entry= tk.Entry(register_form_frame)
+        self.email_entry.place(relx=0.4, rely=0.6, relheight=0.1, relwidth=0.6)
 
         # password label and entry field
-        self.password_label = tk.Label(self, text="Password:", font=("Arial", 10))
-        self.password_label.place(x=200, y=360)
-        self.password_entry = tk.Entry(self, width=50, show="*")
-        self.password_entry.place(x=200, y=380)
+        self.password_label = tk.Label(register_form_frame, text="Password:", bg="#F1EEE9", font=("Helvetica"))
+        self.password_label.place(relx=0, rely=0.75, relheight=0.1, relwidth=0.2)
+        self.password_entry = tk.Entry(register_form_frame, show="*")
+        self.password_entry.place(relx=0.4, rely=0.75, relheight=0.1, relwidth=0.6)
 
         # register button
-        self.register_btn = tk.Button(self, text="Submit", width=10, height=1, bg="#A52A2A", fg="white", 
-            command= self.submit_data)
-        self.register_btn.place(x=500, y=430)
+        self.register_btn = tk.Button(register_form_frame, text="Submit", width=10, height=1, 
+            bg="#EC994B", command= self.submit_data)
+        self.register_btn.place(relx=0.7, rely=0.9, relheight=0.1, relwidth=0.3)
     
     def submit_data(self):
         # get data from the input fields
