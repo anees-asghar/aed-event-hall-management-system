@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 class HomePage(tk.Frame):
     def __init__(self, app):
-        super().__init__(app, width=1100, height=800)
+        super().__init__(app, width=1100, height=800,bg="#e6ded3")
         self.app = app
 
         # put home_page inside app window
@@ -15,30 +15,31 @@ class HomePage(tk.Frame):
         self.event = self.app.db.get_event_by_date("01/01/22") # event = (id, name, date)
 
         # page title
-        self.title_label = tk.Label(self, text="Reserve Seats", font=("Arial", 30))
-        self.title_label.place(x=200, y=100)
+        self.title_label = tk.Label(self, text="Reserve Seats", font=("Arial", 30),fg='#a84842',bg="#e6ded3")
+        self.title_label.place(relx=0.15, rely=0.10, relwidth=0.3, relheight=0.06) 
 
         # event title label
-        self.event_title_label = tk.Label(self, font=("Arial", 14), text=f"{self.event[1]} | {self.event[2]}")
-        self.event_title_label.place(x=200, y=180)
+        self.event_title_label = tk.Label(self, font=("Arial", 14), text=f"{self.event[1]} | {self.event[2]}",fg='#a84842', bg="#e6ded3")
+        self.event_title_label.place(relx=0.15, rely=0.20, relwidth=0.3, relheight=0.06)
 
         # calendar to pick date
         self.calendar = tkcal.Calendar(self, selectmode="day", date=1, month=1, year=2022, date_pattern="dd/mm/yy")
-        self.calendar.place(x=650, y=100)
+        self.calendar.place(relx=0.65, rely=0.10, relwidth=0.20, relheight=0.25)
+
 
         # select date button
         self.select_date_btn = tk.Button(self, text="Select Date", command=self.select_date)
-        self.select_date_btn.place(x=650, y=320)
+        self.select_date_btn.place(relx=0.65, rely=0.35, relwidth=0.20, relheight=0.04)
 
         # create seat grid (hall)
         self.seat_grid = SeatGrid(self, self.app)
-        self.seat_grid.place(x=200, y=400)
+        self.seat_grid.place(relx=0.15, rely=0.45,relwidth=0.70, relheight=0.45)
         self.seat_grid.update()
 
         # book seats button
         self.book_seats_btn = tk.Button(self, text="Book", width=7, height=1, bg="#A52A2A", 
             fg="white", command=self.confirm_book_seats)
-        self.book_seats_btn.place(x=800, y=750)
+        self.book_seats_btn.place(relx=0.65, rely=0.92, relwidth=0.10, relheight=0.04)
 
     def select_date(self):
         date = self.calendar.get_date() # get date from calendar
@@ -100,7 +101,7 @@ class SeatButton(tk.Button):
 
 class SeatGrid(tk.Frame):
     def __init__(self, home_page, app):
-        super().__init__(home_page, width=400, height=200)
+        super().__init__(home_page, width=400, height=200,padx=10,pady = 10)
         self.app = app
         self.home_page = home_page
         self.seat_buttons = {} # seat numbers are keys and SeatButton instaces are values

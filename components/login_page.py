@@ -10,35 +10,35 @@ class LoginPage(tk.Frame):
 
         # page title
         self.title_label = tk.Label(self, text="Login", font=("Arial", 30))
-        self.title_label.place(x=200, y=100)
+        self.title_label.place(relx=0.10, rely=0.10, relwidth=0.3, relheight=0.06)
 
         # error message label (empty on startup)
         self.error_label = tk.Label(self, text="", fg="red", font=("Arial"))
-        self.error_label.place(x=200, y=180) 
+        self.error_label.place(relx=0.15, rely=0.22, relwidth=0.3, relheight=0.02)
 
         # email label and entry field
         self.email_label = tk.Label(self, text="Email:", font=("Arial", 10))
-        self.email_label.place(x=200, y=220)
+        self.email_label.place(relx=0.19, rely=0.28, relwidth=0.06, relheight=0.02)
         self.email_entry = tk.Entry(self, width=50)
-        self.email_entry.place(x=200, y=240)
+        self.email_entry.place(relx=0.20, rely=0.32, relwidth=0.3, relheight=0.03)
 
         # password label and entry
         self.password_label = tk.Label(self, text="Password:", font=("Arial", 10))
-        self.password_label.place(x=200, y=270)
+        self.password_label.place(relx=0.20, rely=0.37, relwidth=0.06, relheight=0.02)
         self.password_entry = tk.Entry(self, width=50, show='*')
-        self.password_entry.place(x=200, y=290)
+        self.password_entry.place(relx=0.20, rely=0.42, relwidth=0.3, relheight=0.03)
         
         # login button
         self.login_btn = tk.Button(self, text="Login", width=10, height=1, bg="#A52A2A", fg="white", 
             command= self.submit_data) # login submit btn
-        self.login_btn.place(x=500, y=330)
+        self.login_btn.place(relx=0.42, rely=0.48, relwidth=0.080, relheight=0.03)
 
         # label and button to redirect to register page
         self.register_label = tk.Label(self, text="Don't have an account? Register now.")
-        self.register_label.place(x=200, y=420)
+        self.register_label.place(relx=0.20, rely=0.54, relwidth=0.20, relheight=0.03)
         self.register_btn = tk.Button(self, text="Register", width=10, height=1, 
             command=self.app.register_page.show)
-        self.register_btn.place(x=500, y=420)
+        self.register_btn.place(relx=0.42, rely=0.54, relwidth=0.080, relheight=0.03)
     
     def submit_data(self):
         # get data from the input fields
