@@ -5,14 +5,14 @@ from tkinter import ttk
 
 class AdminPage(tk.Frame):
     def __init__(self, app):
-        super().__init__(app, bg="#F1EEE9")
+        super().__init__(app, bg="#EDE6DB")
         self.app = app
 
         # put admin page in the app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
 
         # page title
-        self.title_label = tk.Label(self, text="Admin Page", bg="#F1EEE9", font=("Helvetica", 30))
+        self.title_label = tk.Label(self, text="Admin Page", bg="#EDE6DB", font=("Helvetica", 30))
         self.title_label.place(relx=0, rely=0, relwidth=1, relheight=0.25)
 
 
@@ -21,27 +21,27 @@ class AdminPage(tk.Frame):
         self.radio_btn_val = tk.IntVar() # stores the value of the selected radio button
 
         # select option frame
-        select_option_frame = tk.Frame(self, bg="#F1EEE9")
+        select_option_frame = tk.Frame(self, bg="#EDE6DB")
         select_option_frame.place(relx=0, rely=0.25, relwidth=1, relheight=0.15)
 
         # select option label
         self.select_option_label = tk.Label(select_option_frame, text="Sales data by:", 
-            bg="#F1EEE9", font=("Helvetica")) 
+            bg="#EDE6DB", font=("Helvetica")) 
         self.select_option_label.place(relx=0.2, rely=0.5, relwidth=0.15, anchor="w")
 
         # day option radio button
         self.day_radio = tk.Radiobutton(select_option_frame, variable=self.radio_btn_val, value=0, text="Day", 
-            font=("Helvetica"), bg="#F1EEE9", command=self.day_radio_selected)
+            font=("Helvetica"), bg="#EDE6DB", command=self.day_radio_selected)
         self.day_radio.place(relx=0.35, rely=0.5, relwidth=0.15, anchor="w")
 
         # month option radio button
         self.month_radio = tk.Radiobutton(select_option_frame, variable=self.radio_btn_val, value=1, text="Month", 
-            font=("Helvetica"), bg="#F1EEE9", command=self.month_radio_selected)
+            font=("Helvetica"), bg="#EDE6DB", command=self.month_radio_selected)
         self.month_radio.place(relx=0.5, rely=0.5, relwidth=0.15, anchor="w")
         
         # year option radio button
         self.radio_year_btn = tk.Radiobutton(select_option_frame, variable=self.radio_btn_val, value=2, text="Year", 
-            font=("Helvetica"), bg="#F1EEE9", command=self.year_radio_selected)
+            font=("Helvetica"), bg="#EDE6DB", command=self.year_radio_selected)
         self.radio_year_btn.place(relx=0.65, rely=0.5, relwidth=0.15, anchor="w")
 
 
@@ -55,7 +55,7 @@ class AdminPage(tk.Frame):
         years = ["2022","2023"]
 
         # select date frame
-        select_date_frame = tk.Frame(self, bg="#F1EEE9")
+        select_date_frame = tk.Frame(self, bg="#EDE6DB")
         select_date_frame.place(relx=0, rely=0.40, relwidth=1, relheight=0.1)
 
         # combo box for day
@@ -74,35 +74,35 @@ class AdminPage(tk.Frame):
         self.year_combo.place(relx=0.5, rely=0, relheight=0.5, relwidth=0.2)
         
         # select date button
-        self.select_date_btn = tk.Button(select_date_frame, text="Select Date", relief="groove", 
-            bg="#EC994B", fg="black", command=self.display_stats)
+        self.select_date_btn = tk.Button(select_date_frame, text="Select Date", relief="flat", 
+            bg="#15133C", fg="white", command=self.display_stats)
         self.select_date_btn.place(relx=0.7, rely=0, relheight=0.5, relwidth=0.2)
 
         # error label
-        self.error_label = tk.Label(select_date_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
+        self.error_label = tk.Label(select_date_frame, text="", bg="#EDE6DB", fg="red", font=("Helvetica"))
         self.error_label.place(relx=0.1, rely=0.5) 
 
 
         # --- DISPLAY STATS AREA ---
 
         # display stats frame
-        display_stats_frame = tk.Frame(self, bg="#F1EEE9")
+        display_stats_frame = tk.Frame(self, bg="#EDE6DB")
         display_stats_frame.place(relx=0, rely=0.5, relwidth=1, relheight=0.4)
 
         # statistics label 
-        self.stats_label = tk.Label(display_stats_frame, bg="#F1EEE9", font=("Helvetica", 20), text="")
+        self.stats_label = tk.Label(display_stats_frame, bg="#EDE6DB", font=("Helvetica", 20), text="")
         self.stats_label.place(relx=0.2, rely=0, relheight=0.4)
         
         # total tickets sold label
-        self.total_tickets_sold_label = tk.Label(display_stats_frame, bg="#F1EEE9", font=("Helvetica"), text="")
+        self.total_tickets_sold_label = tk.Label(display_stats_frame, bg="#EDE6DB", font=("Helvetica"), text="")
         self.total_tickets_sold_label.place(relx=0.2, rely=0.4, relheight=0.2)
 
         # vip tickets sold label
-        self.vip_tickets_sold_label = tk.Label(display_stats_frame, bg="#F1EEE9", font=("Helvetica"), text="")
+        self.vip_tickets_sold_label = tk.Label(display_stats_frame, bg="#EDE6DB", font=("Helvetica"), text="")
         self.vip_tickets_sold_label.place(relx=0.2, rely=0.6, relheight=0.2)
 
         # total tickets value label
-        self.total_tickets_value_label = tk.Label(display_stats_frame, bg="#F1EEE9", font=("Helvetica"), text="")
+        self.total_tickets_value_label = tk.Label(display_stats_frame, bg="#EDE6DB", font=("Helvetica"), text="")
         self.total_tickets_value_label.place(relx=0.2, rely=0.8, relheight=0.2)
 
 
