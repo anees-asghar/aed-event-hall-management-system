@@ -59,17 +59,17 @@ class AdminPage(tk.Frame):
         select_date_frame.place(relx=0, rely=0.40, relwidth=1, relheight=0.1)
 
         # combo box for day
-        self.day_combo = ttk.Combobox(select_date_frame, value=days, state="readonly")
+        self.day_combo = ttk.Combobox(select_date_frame, font=("Helvetica", 10), value=days, state="readonly")
         self.day_combo.current(0)
         self.day_combo.place(relx=0.1, rely=0, relheight=0.5, relwidth=0.2)
 
         # combo box for month
-        self.month_combo = ttk.Combobox(select_date_frame, value=self.months, state="readonly")
+        self.month_combo = ttk.Combobox(select_date_frame, font=("Helvetica", 10), value=self.months, state="readonly")
         self.month_combo.current(0)
         self.month_combo.place(relx=0.3, rely=0, relheight=0.5, relwidth=0.2)
         
         # combo box for year
-        self.year_combo = ttk.Combobox(select_date_frame, value=years, state="readonly")
+        self.year_combo = ttk.Combobox(select_date_frame, font=("Helvetica", 10), value=years, state="readonly")
         self.year_combo.current(0)
         self.year_combo.place(relx=0.5, rely=0, relheight=0.5, relwidth=0.2)
         

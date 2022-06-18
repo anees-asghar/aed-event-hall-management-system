@@ -44,6 +44,10 @@ class HomePage(tk.Frame):
     def select_date(self):
         date = self.calendar.get_date() # get date from calendar
 
+        # return if no date is selected
+        if not date:
+            return
+
         # CHECK TO SEE IF A VALID DATE IS SELECTED
         if self.event[2] == date: return # return if the same date was selected
         
