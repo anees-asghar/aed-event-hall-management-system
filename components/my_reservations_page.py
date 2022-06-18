@@ -1,7 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
 from tkinter import messagebox
 import tkcalendar as tkcal
+from tkinter import simpledialog
 
 class MyReservationsPage(tk.Frame):
     def __init__(self, app):
@@ -39,25 +39,23 @@ class MyReservationsPage(tk.Frame):
         self.seat_grid.place(relx=0.20, rely=0.5,relwidth=0.70, relheight=0.45)
         self.seat_grid.update()
 
-        # book seats button
-        self.update_seat_label = tk.Label(self, text="New seat number:")
-        self.update_seat_label.place(relx=0.26, rely=0.28, relwidth=0.1, relheight=0.03)
-
-        self.all_seat_nums = [s[1] for s in  self.app.db.select_all_seats()]
-        self.update_seat_num_combo = ttk.Combobox(self, width=20, value=self.all_seat_nums, state="readonly")
-        self.update_seat_num_combo.current(0)
-        self.update_seat_num_combo.place(relx=0.36, rely=0.28, relwidth=0.08, relheight=0.03)
-    
-        self.update_seat_num_btn = tk.Button(self, text="Update", width=7, height=1, bg="#A52A2A", fg="white", 
+        # edit reservation button
+        self.edit_btn = tk.Button(self, text="Edit", width=7, height=1, bg="#A52A2A", fg="white", 
             command=self.update_reservation)
-        self.update_seat_num_btn.place(relx=0.16, rely=0.28, relwidth=0.08, relheight=0.03)
+        self.edit_btn.place(relx=0.16, rely=0.28, relwidth=0.08, relheight=0.03)
 
-        self.delete_seat_btn = tk.Button(self, text="Unbook", width=7, height=1, bg="#A52A2A", fg="white", 
+        # delete reservation button
+        self.delete_btn = tk.Button(self, text="Delete", width=7, height=1, bg="#A52A2A", fg="white", 
             command=self.delete_reservation)
-        self.delete_seat_btn.place(relx=0.16, rely=0.35, relwidth=0.08, relheight=0.03)
+        self.delete_btn.place(relx=0.16, rely=0.35, relwidth=0.08, relheight=0.03)
 
     def select_date(self):
         date = self.calendar.get_date() # get date from calendar
+
+        # if no date chosen
+        if not date:
+            self.show("Please select a date.")
+            return
 
         # CHECK TO SEE IF A VALID DATE IS SELECTED
         if self.event[2] == date: return # return if the same date was selected
@@ -71,16 +69,16 @@ class MyReservationsPage(tk.Frame):
 
         # show error message if no seat is selected
         if not selected_seat_num:
-            self.show("Please select a seat to unbook.")
+            self.show("Please select a reservation to delete.")
             return
 
         # get user confirmation
         question = messagebox.askquestion(
-            "Delete", f'Are you sure you want to unbook the seat "{selected_seat_num}"?'
+            "Delete", f'Are you sure you want to delete the reservation for seat "{selected_seat_num}"?'
         )
         if question == "no": return
 
-        # deleter reservation from db
+        # delete reservation from db
         self.app.db.delete_reservation(self.event[0], selected_seat_num)
 
         self.show() # update my res page
@@ -90,24 +88,35 @@ class MyReservationsPage(tk.Frame):
 
         # show error message if no seat is selected
         if not selected_seat_num:
-            self.show("Please select a seat to edit.")
+            self.show("Please select a reservation to edit.")
             return
-            
-        new_seat_num = self.update_seat_num_combo.get()
 
-        # get user confirmation
-        question = messagebox.askquestion(
-            "Edit", f"Are you sure you want to update the seat {selected_seat_num} to {new_seat_num}?"
-            )
-        if question == "no": return
+        # get new seat number from user
+        new_seat_num = simpledialog.askstring(title="Change Reservation", prompt="Enter the new seat number:")
+
+        # get all normal and vip seats from db
+        normal_seats = [s[1] for s in self.app.db.select_seats_by_type('Normal')]
+        vip_seats = [s[1] for s in self.app.db.select_seats_by_type('VIP')]
         
-        if not selected_seat_num or new_seat_num == '-':
+        # show error msg if user input is not a valid seat number
+        if new_seat_num not in normal_seats + vip_seats:
+            self.show("Please enter a valid seat number.")
             return
         
-        try:
+        # show error msg if user tries to change from normal to vip seat
+        if selected_seat_num in normal_seats and new_seat_num in vip_seats:
+            self.show("Cannot edit seat number from a Normal to a VIP seat.")
+            return
+        
+        # show error msg if user tries to change from vip to normal seat
+        if selected_seat_num in vip_seats and new_seat_num in normal_seats:
+            self.show("Cannot edit seat number from a VIP to a Normal seat.")
+            return
+        
+        try: # if successfully updated
             self.app.db.update_reservation(self.event[0], selected_seat_num, new_seat_num)
             self.show()
-        except:
+        except: # if seat is already booked
             self.show(f"Seat {new_seat_num} is already booked.")
 
     def show(self, message="", message_color="red"):
