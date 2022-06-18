@@ -2,7 +2,7 @@ import tkinter as tk
 
 class Navbar(tk.Frame):
     def __init__(self, app):
-        super().__init__(app, bg='#a84842')
+        super().__init__(app, bg='#1A3C40')
         self.app = app
 
         # put navbar inside app window
@@ -10,12 +10,12 @@ class Navbar(tk.Frame):
 
         # home page button
         self.home_page_btn = tk.Button(self, text="Home", relief="flat", 
-            bg='#a84842', fg="white", command=self.app.home_page.show)
+            bg="#1A3C40", fg="white", font=("Helvetica", 10), command=self.app.home_page.show)
         self.home_page_btn.place(relx=0, rely=0, relwidth=1, relheight=0.08)
 
         # admin page button
         self.admin_page_btn = tk.Button(self, text ="Admin Page", relief="flat", 
-            bg='#a84842', fg="white", command=self.app.admin_page.show)
+            bg="#1A3C40", fg="white", font=("Helvetica", 10), command=self.app.admin_page.show)
         self.admin_page_btn.place(relx=0, rely=0.08, relwidth=1, relheight=0.08)
 
         # my reservations page button
@@ -25,22 +25,22 @@ class Navbar(tk.Frame):
 
         # register page button
         self.register_page_btn = tk.Button(self, text ="Register", relief="flat", 
-            bg='#a84842', fg="white", command=self.app.register_page.show)
+            bg="#1A3C40", fg="white", font=("Helvetica", 10), command=self.app.register_page.show)
         self.register_page_btn.place(relx=0, rely=0.08, relwidth=1, relheight=0.08)
         
         # logout button
-        self.logout_btn = tk.Button(self, text="Logout", relief="flat", 
-            bg='#a84842', fg="white", command=self.app.auth_manager.logout_user)
+        self.logout_btn = tk.Button(self, text="Logout", relief="flat",
+            bg="#1A3C40", fg="white", font=("Helvetica", 10), command=self.app.auth_manager.logout_user)
         self.logout_btn.place(relx=0, rely=0.16, relwidth=1, relheight=0.08)
 
         # login page button
         self.login_page_btn = tk.Button(self, text="Login", relief="flat", 
-            bg='#a84842', fg="white", command=self.app.login_page.show)
+            bg="#1A3C40", fg="white", font=("Helvetica", 10), command=self.app.login_page.show)
         self.login_page_btn.place(relx=0, rely=0.16, relwidth=1, relheight=0.08)
 
         # exit app button
         self.exit_app_btn = tk.Button(self, text ="Exit App", relief="flat", 
-            bg='#a84842', fg="white", command=self.app.destroy)
+            bg="#1A3C40", fg="white", font=("Helvetica", 10), command=self.app.destroy)
         self.exit_app_btn.place(relx=0, rely=0.24, relwidth=1, relheight=0.08)
 
     def show_login_page_btn(self):

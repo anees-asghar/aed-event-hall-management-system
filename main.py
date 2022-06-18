@@ -36,6 +36,6 @@ if __name__ == "__main__":
 
     create_db(DB_NAME)   # create db if doesn't exist
     app = App(DB_NAME)   # create an app instance
-    app.register_page.show() # show home_page on startup
+    app.home_page.show() # show home_page on startup
     app.mainloop()       # run the app
     app.db.close()       # close db connection
