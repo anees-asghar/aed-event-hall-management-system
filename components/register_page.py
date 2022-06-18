@@ -9,16 +9,13 @@ class RegisterPage(tk.Frame):
         # put register page inside app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
 
+        # register form frame
         register_form_frame = tk.Frame(self, bg="#F1EEE9")
         register_form_frame.place(relx=0.5, rely=0.1, relheight=0.5, relwidth=0.5, anchor="n")
 
         # page title
         self.title_label = tk.Label(register_form_frame, text="Register", bg="#F1EEE9", font=("Helvetica", 30))
         self.title_label.place(relx=0, rely=0, relheight=0.3, relwidth=1)
-
-        # error message label (empty on startup)
-        self.error_label = tk.Label(register_form_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
-        self.error_label.place(relx=0, rely=0.9, relheight=0.1) 
 
         # first name label and entry field
         self.first_name = tk.Label(register_form_frame, text="First Name:", bg="#F1EEE9", font=("Helvetica", 11))
@@ -45,9 +42,13 @@ class RegisterPage(tk.Frame):
         self.password_entry = tk.Entry(register_form_frame, font=("Helvetica", 10), borderwidth=5, relief="flat", show="*")
         self.password_entry.place(relx=0.4, rely=0.75, relheight=0.1, relwidth=0.6)
 
+        # error message label (empty on startup)
+        self.error_label = tk.Label(register_form_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
+        self.error_label.place(relx=0, rely=0.9, relheight=0.1) 
+
         # register button
-        self.register_btn = tk.Button(register_form_frame, text="Submit", width=10, height=1, 
-            bg="#15133C", fg="white", relief="flat", command= self.submit_data)
+        self.register_btn = tk.Button(register_form_frame, text="Register", bg="#15133C", fg="white", 
+            relief="flat", command= self.submit_data)
         self.register_btn.place(relx=0.8, rely=0.9, relheight=0.1, relwidth=0.2)
     
     def submit_data(self):
