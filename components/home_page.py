@@ -89,7 +89,7 @@ class SeatButton(tk.Button):
         self.seat_grid = seat_grid
 
     def change_to_selected(self):
-        self.configure(bg="yellow")                         # change button appearance
+        self.configure(bg="#FFBF00")                        # change button appearance
         self.configure(command=self.change_to_open)         # change button command
         self.seat_grid.selected_seats.add(self.seat_num)    # add seat number to selected
     
@@ -109,8 +109,6 @@ class SeatGrid(tk.Frame):
 
         cols = [str(i) for i in range(1, 15)]
         rows = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
-        offset_x = 0
-        offset_y = 0
         
         for i, r in enumerate(rows):
             for j, c in enumerate(cols):
@@ -137,22 +135,8 @@ class SeatGrid(tk.Frame):
                 else:
                     rel_y = i * 0.085
 
-
+                # place seat button in seat grid
                 self.seat_buttons[seat_num].place(relx=rel_x, rely=rel_y, relwidth=0.065, relheight=0.085)
-
-                # place the button created in the grid
-                # there are gaps between some rows and cols in hall layout for which we use padx & pady
-                # if c in ['2', '12'] and r in ['B', 'F']: # row spacing and column spacing needed
-                #     self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20), pady=(0, 20))
-
-                # elif c in ['2', '12']: # only column spacing needed
-                #     self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
-
-                # elif r in ['B', 'F']: # only row spacing needed
-                #     self.seat_buttons[seat_num].grid(row=i, column=j, pady=(0, 20))
-
-                # else: # no spacing needed
-                #     self.seat_buttons[seat_num].grid(row=i, column=j)
                 
         # decorate VIP seats differently
         vip_seats = [seat_num for (_, seat_num, _) in self.app.db.select_seats_by_type("VIP")]
