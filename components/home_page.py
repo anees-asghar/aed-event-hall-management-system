@@ -29,7 +29,7 @@ class HomePage(tk.Frame):
         # select date button
         self.select_date_btn = tk.Button(self, text="Select Date", bg="#15133C", fg="white", 
             relief="flat", command=self.select_date)
-        self.select_date_btn.place(relx=0.6, rely=0.36, relwidth=0.25, relheight=0.05)
+        self.select_date_btn.place(relx=0.6, rely=0.355, relwidth=0.25, relheight=0.045)
 
         # create seat grid (hall)
         self.seat_grid = SeatGrid(self, self.app)
@@ -109,6 +109,8 @@ class SeatGrid(tk.Frame):
 
         cols = [str(i) for i in range(1, 15)]
         rows = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
+        offset_x = 0
+        offset_y = 0
         
         for i, r in enumerate(rows):
             for j, c in enumerate(cols):
@@ -117,22 +119,40 @@ class SeatGrid(tk.Frame):
                 # ignore invalid seats (seats that are not in hall)
                 if seat_num in ['3F','4F','5F','10F','11F','12F','3A','4A','5A','10A','11A','12A']: continue 
 
+                # if c in ['2', '12']: offset_y += 0.045
+
                 # create a button for this seat number
                 self.seat_buttons[seat_num] = SeatButton(self, seat_num)
 
+                # calculate the relative x coordinate for this seat button within seat grid
+                if j >= 2:
+                    if j >= 12: rel_x = j * 0.065 + 0.09
+                    else: rel_x = j * 0.065 + 0.045
+                else:
+                    rel_x = j * 0.065
+                
+                # calculate the relative x coordinate for this seat button within seat grid
+                if i >= 6:
+                    rel_y = i * 0.085 + 0.065
+                else:
+                    rel_y = i * 0.085
+
+
+                self.seat_buttons[seat_num].place(relx=rel_x, rely=rel_y, relwidth=0.065, relheight=0.085)
+
                 # place the button created in the grid
                 # there are gaps between some rows and cols in hall layout for which we use padx & pady
-                if c in ['2', '12'] and r in ['B', 'F']: # row spacing and column spacing needed
-                    self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20), pady=(0, 20))
+                # if c in ['2', '12'] and r in ['B', 'F']: # row spacing and column spacing needed
+                #     self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20), pady=(0, 20))
 
-                elif c in ['2', '12']: # only column spacing needed
-                    self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
+                # elif c in ['2', '12']: # only column spacing needed
+                #     self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
 
-                elif r in ['B', 'F']: # only row spacing needed
-                    self.seat_buttons[seat_num].grid(row=i, column=j, pady=(0, 20))
+                # elif r in ['B', 'F']: # only row spacing needed
+                #     self.seat_buttons[seat_num].grid(row=i, column=j, pady=(0, 20))
 
-                else: # no spacing needed
-                    self.seat_buttons[seat_num].grid(row=i, column=j)
+                # else: # no spacing needed
+                #     self.seat_buttons[seat_num].grid(row=i, column=j)
                 
         # decorate VIP seats differently
         vip_seats = [seat_num for (_, seat_num, _) in self.app.db.select_seats_by_type("VIP")]
@@ -166,7 +186,7 @@ class SeatGrid(tk.Frame):
             # if owned by some other user
             elif seat_num in reserved_seat_nums:
                 self.seat_buttons[seat_num].configure(
-                    bg="#D21F3C",
+                    bg="#DE3163",
                     fg="white",
                     command=lambda: None
                 )
