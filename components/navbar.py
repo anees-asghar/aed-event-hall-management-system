@@ -20,7 +20,7 @@ class Navbar(tk.Frame):
 
         # my reservations page button
         self.my_res_page_btn = tk.Button(self, text ="My Reservations", relief="flat", 
-            bg='#1A3C40', fg="white", command=self.app.my_reservations_page.show)
+            bg='#1A3C40', fg="white", font=("Helvetica", 10), command=self.app.my_reservations_page.show)
         self.my_res_page_btn.place(relx=0, rely=0.08, relwidth=1, relheight=0.08)
 
         # register page button
