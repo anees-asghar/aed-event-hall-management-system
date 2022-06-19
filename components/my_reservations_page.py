@@ -31,9 +31,37 @@ class MyReservationsPage(tk.Frame):
             relief="flat", command=self.select_date)
         self.select_date_btn.place(relx=0.6, rely=0.355, relwidth=0.25, relheight=0.045)
 
-        # error label
+        # # error label
         self.error_label = tk.Label(self, text="", bg="#F1EEE9", fg="red", font=("Helvetica", 10))
-        self.error_label.place(relx=0.15, rely=0.4, relheight=0.05)
+        self.error_label.place(relx=0.15, rely=0.26, relheight=0.04)
+
+
+        # --- SEAT GRID LEGEND ---
+
+        # seat grid legend frame
+        legend = tk.Frame(self, bg="#F1EEE9")
+        legend.place(relx=0.15, rely=0.3, relheight=0.13, relwidth=0.43)
+
+        legend_btn_1 = tk.Button(legend, relief="flat", bg="#2AAA8A")
+        legend_btn_1.place(relx=0, rely=0.125, relwidth=0.08, relheight=0.25)
+        legend_label_1 = tk.Label(legend, text="Owned Seats", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_1.place(relx=0.1, rely=0.125, relheight=0.25)
+
+        legend_btn_2 = tk.Button(legend, relief="flat", bg="#DE3163")
+        legend_btn_2.place(relx=0.5, rely=0.125, relwidth=0.08, relheight=0.25)
+        legend_label_2 = tk.Label(legend, text="Reserved Seats", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_2.place(relx=0.6, rely=0.125, relheight=0.25)
+
+        legend_btn_3 = tk.Button(legend, relief="flat", bg="#FFBF00")
+        legend_btn_3.place(relx=0, rely=0.625, relwidth=0.08, relheight=0.25)
+        legend_label_3 = tk.Label(legend, text="Selected Seats", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_3.place(relx=0.1, rely=0.625, relheight=0.25)
+
+        legend_btn_4 = tk.Button(legend, relief="flat", bg="#F1EEE9", text="👑")
+        legend_btn_4.place(relx=0.5, rely=0.625, relwidth=0.08, relheight=0.25)
+        legend_label_4 = tk.Label(legend, text="VIP Seats", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_4.place(relx=0.6, rely=0.625, relheight=0.25)
+
 
         # create seat grid (hall layout)
         self.seat_grid = SeatGrid(self, self.app)
