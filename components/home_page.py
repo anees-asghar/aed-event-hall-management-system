@@ -88,7 +88,7 @@ class HomePage(tk.Frame):
 
 class SeatButton(tk.Button):
     def __init__(self, seat_grid, seat_num):
-        super().__init__(seat_grid, text=seat_num, relief="flat", width=5, height=1)
+        super().__init__(seat_grid, text=seat_num, relief="flat")
         self.seat_num = seat_num
         self.seat_grid = seat_grid
 
