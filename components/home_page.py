@@ -31,6 +31,10 @@ class HomePage(tk.Frame):
             relief="flat", command=self.select_date)
         self.select_date_btn.place(relx=0.6, rely=0.355, relwidth=0.25, relheight=0.045)
 
+        # error label
+        self.error_label = tk.Label(self, text="", bg="#F1EEE9", fg="red", font=("Helvetica", 10))
+        self.error_label.place(relx=0.15, rely=0.4, relheight=0.05)
+
         # create seat grid (hall)
         self.seat_grid = SeatGrid(self, self.app)
         self.seat_grid.place(relx=0.15, rely=0.45, relwidth=0.70, relheight=0.45)
@@ -56,6 +60,11 @@ class HomePage(tk.Frame):
         self.seat_grid.update() # update seat grid
 
     def confirm_book_seats(self):
+        # show error msg if no seats are selected
+        if not self.seat_grid.selected_seats:
+            self.show("Please select seats in grid to reserve them.")
+            return
+
         response = messagebox.askquestion(
             "Confirmation", 
             "Are you sure you want to book the selected seats?"
@@ -63,9 +72,6 @@ class HomePage(tk.Frame):
         if response == "yes": self.book_selected_seats()
 
     def book_selected_seats(self):
-        # ADD AN ERROR MESSAGE IF NO SEATS ARE SELECTED
-        if not self.seat_grid.selected_seats: return # return if no seats are selected
-        
         user_id = self.app.auth_manager.logged_in_user_id # get logged in user id
         
         if not user_id: # no user is logged in
@@ -79,11 +85,12 @@ class HomePage(tk.Frame):
             seat_nums=self.seat_grid.selected_seats
         )
         
-        self.seat_grid.update() # update seat grid
+        self.show() # refresh the home page
 
-    def show(self):
-        self.seat_grid.update() # update seat grid
-        self.tkraise()          # raise home page
+    def show(self, message="", message_color="red"):
+        self.error_label.configure(text=message, fg=message_color) # set the error message (if any)
+        self.seat_grid.update()                                    # update seat grid
+        self.tkraise()                                             # raise home page
 
 
 class SeatButton(tk.Button):

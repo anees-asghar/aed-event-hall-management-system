@@ -30,11 +30,11 @@ class LoginPage(tk.Frame):
         self.password_entry.place(relx=0.4, rely=0.45, relwidth=0.6, relheight=0.1)
         
         # error message label (empty on startup)
-        self.error_label = tk.Label(login_form_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
+        self.error_label = tk.Label(login_form_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica", 10))
         self.error_label.place(relx=0, rely=0.6, relheight=0.1)
 
         # login button
-        self.login_btn = tk.Button(login_form_frame, text="Login", bg="#15133C", fg="white", 
+        self.login_btn = tk.Button(login_form_frame, text="Login", bg="#15133C", fg="white", relief="flat", 
             command= self.submit_data)
         self.login_btn.place(relx=0.8, rely=0.6, relwidth=0.2, relheight=0.1)
 

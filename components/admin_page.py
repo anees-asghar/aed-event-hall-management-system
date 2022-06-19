@@ -79,8 +79,8 @@ class AdminPage(tk.Frame):
         self.select_date_btn.place(relx=0.7, rely=0, relheight=0.5, relwidth=0.2)
 
         # error label
-        self.error_label = tk.Label(select_date_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
-        self.error_label.place(relx=0.1, rely=0.5) 
+        self.error_label = tk.Label(select_date_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica", 10))
+        self.error_label.place(relx=0.1, rely=0.6) 
 
 
         # --- DISPLAY STATS AREA ---
@@ -170,7 +170,7 @@ class AdminPage(tk.Frame):
 
         self.total_tickets_sold_label.configure(text=f"Total Tickets Sold: {total_tickets_sold}")
         self.vip_tickets_sold_label.configure(text=f"VIP Tickets Sold: {vip_tickets_sold}")
-        self.total_tickets_value_label.configure(text=f"Total Tickets Value: {total_tickets_value}$")
+        self.total_tickets_value_label.configure(text=f"Total Tickets Value: {total_tickets_value}€")
 
         self.error_label.configure(text="") # clear error label
  

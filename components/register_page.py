@@ -43,7 +43,7 @@ class RegisterPage(tk.Frame):
         self.password_entry.place(relx=0.4, rely=0.75, relheight=0.1, relwidth=0.6)
 
         # error message label (empty on startup)
-        self.error_label = tk.Label(register_form_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica"))
+        self.error_label = tk.Label(register_form_frame, text="", bg="#F1EEE9", fg="red", font=("Helvetica", 10))
         self.error_label.place(relx=0, rely=0.9, relheight=0.1) 
 
         # register button
