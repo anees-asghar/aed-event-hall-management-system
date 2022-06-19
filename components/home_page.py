@@ -167,8 +167,8 @@ class SeatGrid(tk.Frame):
             # if owned by user
             if seat_num in owned_seat_nums:
                 self.seat_buttons[seat_num].configure(
-                    bg="#9FE2BF",
-                    fg="black",
+                    bg="#2AAA8A",
+                    fg="white",
                     command=lambda: None
                 )
             # if owned by some other user
