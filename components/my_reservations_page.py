@@ -5,7 +5,7 @@ from tkinter import simpledialog
 
 class MyReservationsPage(tk.Frame):
     def __init__(self, app):
-        super().__init__(app, width=1100, height=800)
+        super().__init__(app, bg="#F1EEE9")
         self.app = app
 
         # put home_page inside app window
@@ -15,39 +15,44 @@ class MyReservationsPage(tk.Frame):
         self.event = self.app.db.get_event_by_date("01/01/22") # event = (id, name, date)
 
         # page title
-        self.title_label = tk.Label(self, text="My Reservations", font=("Arial", 30))
-        self.title_label.place(relx=0.10, rely=0.10, relwidth=0.3, relheight=0.06)
+        self.title_label = tk.Label(self, bg="#F1EEE9", text="My Reservations", font=("Helvetica", 30))
+        self.title_label.place(relx=0.15, rely=0.10, relheight=0.06)
 
         # event title label
-        self.event_title_label = tk.Label(self, font=("Arial", 14), text=f"{self.event[1]} | {self.event[2]}")
-        self.event_title_label.place(relx=0.10, rely=0.20, relwidth=0.3, relheight=0.06)
+        self.event_title_label = tk.Label(self, bg="#F1EEE9", font=("Helvetica", 14), text=f"{self.event[1]} | {self.event[2]}")
+        self.event_title_label.place(relx=0.15, rely=0.20, relheight=0.06)
 
         # calendar to pick date
         self.calendar = tkcal.Calendar(self, selectmode="day", date=1, month=1, year=2022, date_pattern="dd/mm/yy")
-        self.calendar.place(relx=0.65, rely=0.10, relwidth=0.20, relheight=0.25)
+        self.calendar.place(relx=0.6, rely=0.10, relwidth=0.25, relheight=0.25)
 
         # select date button
-        self.select_date_btn = tk.Button(self, text="Select Date", command=self.select_date)
-        self.select_date_btn.place(relx=0.65, rely=0.35, relwidth=0.20, relheight=0.04)
+        self.select_date_btn = tk.Button(self, text="Select Date", bg="#15133C", fg="white", 
+            relief="flat", command=self.select_date)
+        self.select_date_btn.place(relx=0.6, rely=0.355, relwidth=0.25, relheight=0.045)
 
         # error label
-        self.error_label = tk.Label(self, text="", fg="red", font=("Arial"))
-        self.error_label.place(relx=0.10, rely=0.40, relwidth=0.3, relheight=0.06)
+        self.error_label = tk.Label(self, text="", bg="#F1EEE9", fg="red", font=("Helvetica", 10))
+        self.error_label.place(relx=0.15, rely=0.4, relheight=0.05)
 
         # create seat grid (hall layout)
         self.seat_grid = SeatGrid(self, self.app)
-        self.seat_grid.place(relx=0.20, rely=0.5,relwidth=0.70, relheight=0.45)
+        self.seat_grid.place(relx=0.15, rely=0.45, relwidth=0.70, relheight=0.45)
         self.seat_grid.update()
 
+        # help label
+        self.help_label = tk.Label(self, bg="#F1EEE9", text="Please select a reservation (green) to edit or delete it.")
+        self.help_label.place(relx=0.15, rely=0.92, relwidth=0.49, relheight=0.05)
+
         # edit reservation button
-        self.edit_btn = tk.Button(self, text="Edit", width=7, height=1, bg="#A52A2A", fg="white", 
-            command=self.update_reservation)
-        self.edit_btn.place(relx=0.16, rely=0.28, relwidth=0.08, relheight=0.03)
+        self.edit_btn = tk.Button(self, text="Edit", bg="#15133C", fg="white", 
+            relief="flat", command=self.update_reservation)
+        self.edit_btn.place(relx=0.74, rely=0.92, relwidth=0.10, relheight=0.05, anchor="ne")
 
         # delete reservation button
-        self.delete_btn = tk.Button(self, text="Delete", width=7, height=1, bg="#A52A2A", fg="white", 
-            command=self.delete_reservation)
-        self.delete_btn.place(relx=0.16, rely=0.35, relwidth=0.08, relheight=0.03)
+        self.delete_btn = tk.Button(self, text="Delete", bg="#D2042D", fg="white", 
+            relief="flat", command=self.delete_reservation)
+        self.delete_btn.place(relx=0.85, rely=0.92, relwidth=0.10, relheight=0.05, anchor="ne")
 
     def select_date(self):
         date = self.calendar.get_date() # get date from calendar
@@ -127,7 +132,7 @@ class MyReservationsPage(tk.Frame):
 
 class SeatButton(tk.Button):
     def __init__(self, seat_grid, seat_num):
-        super().__init__(seat_grid, text=seat_num, width=5, height=1)
+        super().__init__(seat_grid, text=seat_num, relief="flat")
         self.seat_num = seat_num
         self.seat_grid = seat_grid
 
@@ -137,26 +142,26 @@ class SeatButton(tk.Button):
         if curr_selected_seat_num: # if a seat number is already selected
             # access the button for this seat number
             curr_selected_seat_btn = self.seat_grid.seat_buttons[curr_selected_seat_num]
-            # change the appearance and commandd of this seat button back to normal
+            # change the appearance and command of this seat button back to normal
             curr_selected_seat_btn.configure(
-                bg="green",
+                bg="#2AAA8A",
                 fg="white",
                 command=curr_selected_seat_btn.change_to_selected
             )
         
-        self.configure(bg="yellow", fg="black")             # change button appearance
+        self.configure(bg="#FFBF00", fg="black")             # change button appearance
         self.configure(command=self.change_to_unselected)   # change button command
         self.seat_grid.selected_seat_num = self.seat_num    # add seat number to selected
     
     def change_to_unselected(self):
-        self.configure(bg="green", fg="white")              # change button appearance
+        self.configure(bg="#2AAA8A", fg="white")              # change button appearance
         self.configure(command=self.change_to_selected)     # change button command
         self.seat_grid.selected_seat_num = ""               # remove seat number from selected
 
 
 class SeatGrid(tk.Frame):
     def __init__(self, my_res_page, app):
-        super().__init__(my_res_page, width=400, height=200)
+        super().__init__(my_res_page, bg="#F1EEE9")
         self.app = app
         self.my_res_page = my_res_page
         self.seat_buttons = {} # seat numbers are keys and SeatButton instaces are values
@@ -175,19 +180,21 @@ class SeatGrid(tk.Frame):
                 # create a button for this seat number
                 self.seat_buttons[seat_num] = SeatButton(self, seat_num)
 
-                # place the button created in the grid
-                # there are gaps between some rows and cols in hall layout for which we use padx & pady
-                if c in ['2', '12'] and r in ['B', 'F']: # row spacing and column spacing needed
-                    self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20), pady=(0, 20))
+                # calculate the relative x coordinate for this seat button within seat grid
+                if j >= 2:
+                    if j >= 12: rel_x = j * 0.065 + 0.09
+                    else: rel_x = j * 0.065 + 0.045
+                else:
+                    rel_x = j * 0.065
+                
+                # calculate the relative x coordinate for this seat button within seat grid
+                if i >= 6:
+                    rel_y = i * 0.085 + 0.065
+                else:
+                    rel_y = i * 0.085
 
-                elif c in ['2', '12']: # only column spacing needed
-                    self.seat_buttons[seat_num].grid(row=i, column=j, padx=(0, 20))
-
-                elif r in ['B', 'F']: # only row spacing needed
-                    self.seat_buttons[seat_num].grid(row=i, column=j, pady=(0, 20))
-
-                else: # no spacing needed
-                    self.seat_buttons[seat_num].grid(row=i, column=j)
+                # place seat button in seat grid
+                self.seat_buttons[seat_num].place(relx=rel_x, rely=rel_y, relwidth=0.065, relheight=0.085)
         
         # decorate VIP seats differently
         vip_seats = [seat_num for (_, seat_num, _) in self.app.db.select_seats_by_type("VIP")]
@@ -214,23 +221,21 @@ class SeatGrid(tk.Frame):
             # if owned by user
             if seat_num in owned_seat_nums:
                 self.seat_buttons[seat_num].configure(
-                    bg="green",
+                    bg="#2AAA8A",
                     fg="white",
-                    state="normal",
                     command=self.seat_buttons[seat_num].change_to_selected
                 )
             # if owned by some other user
             elif seat_num in reserved_seat_nums:
                 self.seat_buttons[seat_num].configure(
-                    bg="red",
+                    bg="#DE3163",
                     fg="white",
-                    state="disabled",
                     command=lambda: None
                 )
+            # unreserved seats
             else:
                 self.seat_buttons[seat_num].configure(
                     bg="white",
                     fg="black",
-                    state="disabled",
                     command=lambda: None
                 )
