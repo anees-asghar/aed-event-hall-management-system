@@ -17,14 +17,14 @@ class LoginPage(tk.Frame):
         self.title_label.place(relx=0, rely=0, relwidth=1, relheight=0.3)
 
         # email label and entry field
-        self.email_label = tk.Label(login_form_frame, bg="#F1EEE9", text="Email:", font=("Helvetica"))
+        self.email_label = tk.Label(login_form_frame, bg="#F1EEE9", text="Email:", font=("Helvetica", 11))
         self.email_label.place(relx=0, rely=0.3, relheight=0.1)
         self.email_entry = tk.Entry(login_form_frame, font=("Helvetica", 10), borderwidth=5, relief="flat")
         self.email_entry.place(relx=0.4, rely=0.3, relwidth=0.6, relheight=0.1)
         self.email_entry.focus_set()
 
         # password label and entry
-        self.password_label = tk.Label(login_form_frame, bg="#F1EEE9", text="Password:", font=("Helvetica"))
+        self.password_label = tk.Label(login_form_frame, bg="#F1EEE9", text="Password:", font=("Helvetica", 11))
         self.password_label.place(relx=0, rely=0.45, relheight=0.1)
         self.password_entry = tk.Entry(login_form_frame, font=("Helvetica", 10), borderwidth=5, relief="flat", show='*')
         self.password_entry.place(relx=0.4, rely=0.45, relwidth=0.6, relheight=0.1)

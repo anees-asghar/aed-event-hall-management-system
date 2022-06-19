@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkcalendar as tkcal
 from tkinter import messagebox
+from tkinter import simpledialog
 
 
 class HomePage(tk.Frame):
@@ -71,6 +72,11 @@ class HomePage(tk.Frame):
         self.seat_grid.place(relx=0.15, rely=0.45, relwidth=0.70, relheight=0.45)
         self.seat_grid.update()
 
+        # pick seats for me button
+        self.pick_seats_btn = tk.Button(self, text="Pick Seats For Me", bg="#15133C", fg="white", 
+            relief="flat", padx=12, command=self.seat_grid.auto_pick_seats)
+        self.pick_seats_btn.place(relx=0.74, rely=0.92, relheight=0.05, anchor="ne")
+
         # book seats button
         self.book_seats_btn = tk.Button(self, text="Book", bg="#15133C", fg="white", 
             relief="flat", command=self.confirm_book_seats)
@@ -83,7 +89,6 @@ class HomePage(tk.Frame):
         if not date:
             return
 
-        # CHECK TO SEE IF A VALID DATE IS SELECTED
         if self.event[2] == date: return # return if the same date was selected
         
         self.event = self.app.db.get_event_by_date(date) # update event
@@ -159,8 +164,6 @@ class SeatGrid(tk.Frame):
                 # ignore invalid seats (seats that are not in hall)
                 if seat_num in ['3F','4F','5F','10F','11F','12F','3A','4A','5A','10A','11A','12A']: continue 
 
-                # if c in ['2', '12']: offset_y += 0.045
-
                 # create a button for this seat number
                 self.seat_buttons[seat_num] = SeatButton(self, seat_num)
 
@@ -190,7 +193,7 @@ class SeatGrid(tk.Frame):
         
         event_id = self.home_page.event[0] # extract the event id
         reservations = self.app.db.select_reservations_by_event_id(event_id) # get reservations for event
-        logged_in_user_id = self.app.auth_manager.logged_in_user_id # extract the logged in user id
+        logged_in_user_id = self.app.auth_manager.logged_in_user_id          # extract the logged in user id
 
         owned_seat_nums = []    # seats owned by user
         reserved_seat_nums = [] # seats owned by other users
@@ -223,3 +226,46 @@ class SeatGrid(tk.Frame):
                     fg="black",
                     command=self.seat_buttons[seat_num].change_to_selected
                 )
+
+    def auto_pick_seats(self):
+        # ask user the number of seats to pick
+        seat_count = simpledialog.askinteger(
+            title="Picks Seats For Me", 
+            prompt="Enter the number of seats to pick:"
+        )
+
+        event_id = self.home_page.event[0]                                   # extract the event id
+        reservations = self.app.db.select_reservations_by_event_id(event_id) # get reservations for event
+        reserved_seat_nums = [r[3] for r in reservations]                    # seats owned by other users
+        valid_seat_nums = [s[1] for s in self.app.db.select_all_seats()]     # get all valid seat nums
+
+        picked_seats = set() # set of seats picked by app
+
+        # loop over the seat numbers to find seats open to book
+        cols = [str(i) for i in range(1, 15)]
+        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+
+        for r in rows:
+            for c in cols:
+                seat_num = c + r
+                if seat_num in valid_seat_nums and seat_num not in reserved_seat_nums: # seat is valid and open
+                    picked_seats.add(seat_num)
+                    if len(picked_seats) == seat_count: break # break if the count of seat requested is reached
+
+            if len(picked_seats) == seat_count: break # break if the count of seat requested is reached
+
+        # show error message if user requested more seats than total seats available
+        if len(picked_seats) != seat_count:
+            self.home_page.error_label.configure(
+                text="Sorry, the requested number of seats aren't available"
+            )
+            return
+
+        # update the seat buttons for the picked seat numbers (state selected)
+        for s in picked_seats:
+            # change seat button appearance and command
+            self.seat_buttons[s].configure(
+                bg="#FFBF00", 
+                command=self.seat_buttons[s].change_to_open
+            )
+            self.selected_seats.add(s) # add seat number to selected

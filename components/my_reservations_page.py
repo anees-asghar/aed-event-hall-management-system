@@ -74,7 +74,7 @@ class MyReservationsPage(tk.Frame):
 
         # edit reservation button
         self.edit_btn = tk.Button(self, text="Edit", bg="#15133C", fg="white", 
-            relief="flat", command=self.update_reservation)
+            relief="flat", command=self.edit_reservation)
         self.edit_btn.place(relx=0.74, rely=0.92, relwidth=0.10, relheight=0.05, anchor="ne")
 
         # delete reservation button
@@ -116,7 +116,7 @@ class MyReservationsPage(tk.Frame):
 
         self.show() # update my res page
 
-    def update_reservation(self):
+    def edit_reservation(self):
         selected_seat_num = self.seat_grid.selected_seat_num
 
         # show error message if no seat is selected
