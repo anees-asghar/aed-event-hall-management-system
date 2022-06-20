@@ -19,7 +19,7 @@ class HomePage(tk.Frame):
         self.title_label.place(relx=0.15, rely=0.10, relheight=0.06) 
 
         # event title label
-        self.event_title_label = tk.Label(self, bg="#F1EEE9", font=("Helvetica", 14), text=f"{self.event[1]} | {self.event[2]}")
+        self.event_title_label = tk.Label(self, bg="#F1EEE9", font=("Helvetica", 13), text=f"{self.event[1]} | {self.event[2]}")
         self.event_title_label.place(relx=0.15, rely=0.20, relheight=0.06)
 
 

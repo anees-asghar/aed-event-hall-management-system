@@ -126,7 +126,16 @@ def create_db(db_name):
             )
 
     # populate the events table
-    events = [f'Event: {i}' for i in range(1, 20)]
+    events = [
+        "Medea - Euripides",
+        "Macbeth - William Shakespeare",
+        "Life is a Dream",
+        "The Importance of Being Earnest", 
+        "Trifles - Susan Glaspell",
+        "Chicago - Maurine Dallas Watkins",
+        "Machinal - Sophie Treadwell",
+        "Death of a Salesman - Arthur Miller"
+    ]
     for year in [2022, 2023]:
         for month in [m for m in range(1, 12+1)]:
             for day in [d for d in range(1, 31+1)]:
