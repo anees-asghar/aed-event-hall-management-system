@@ -6,7 +6,7 @@ from tkinter import simpledialog
 class MyReservationsPage(tk.Frame):
     def __init__(self, app):
         super().__init__(app, bg="#F1EEE9")
-        self.app = app
+        self.app = app # store app instance
 
         # put home_page inside app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
@@ -82,6 +82,7 @@ class MyReservationsPage(tk.Frame):
             relief="flat", command=self.delete_reservation)
         self.delete_btn.place(relx=0.85, rely=0.92, relwidth=0.10, relheight=0.05, anchor="ne")
 
+
     def select_date(self):
         date = self.calendar.get_date() # get date from calendar
 
@@ -90,12 +91,12 @@ class MyReservationsPage(tk.Frame):
             self.show("Please select a date.")
             return
 
-        # CHECK TO SEE IF A VALID DATE IS SELECTED
         if self.event[2] == date: return # return if the same date was selected
         
         self.event = self.app.db.get_event_by_date(date) # update event
         self.event_title_label.configure(text=f"{self.event[1]} | {self.event[2]}") # update event label
         self.seat_grid.update() # update seat grid
+
 
     def delete_reservation(self):
         selected_seat_num = self.seat_grid.selected_seat_num
@@ -115,6 +116,7 @@ class MyReservationsPage(tk.Frame):
         self.app.db.delete_reservation(self.event[0], selected_seat_num)
 
         self.show() # update my res page
+
 
     def edit_reservation(self):
         selected_seat_num = self.seat_grid.selected_seat_num
@@ -151,6 +153,7 @@ class MyReservationsPage(tk.Frame):
             self.show()
         except: # if seat is already booked
             self.show(f"Seat {new_seat_num} is already booked.")
+
 
     def show(self, message="", message_color="red"):
         self.error_label.configure(text=message, fg=message_color) # set the error message (if any)

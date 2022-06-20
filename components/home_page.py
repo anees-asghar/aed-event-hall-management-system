@@ -7,13 +7,12 @@ from tkinter import simpledialog
 class HomePage(tk.Frame):
     def __init__(self, app):
         super().__init__(app, bg="#F1EEE9")
-        self.app = app
+        self.app = app # store the app instance
+        # get event for the default date
+        self.event = self.app.db.get_event_by_date("01/01/22") # event = (id, name, date)
 
         # put home_page inside app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
-
-        # get event for the default date
-        self.event = self.app.db.get_event_by_date("01/01/22") # event = (id, name, date)
 
         # page title
         self.title_label = tk.Label(self, bg="#F1EEE9", text="Reserve Seats", font=("Helvetica", 30))
@@ -35,12 +34,13 @@ class HomePage(tk.Frame):
             relief="flat", command=self.select_date)
         self.select_date_btn.place(relx=0.6, rely=0.355, relwidth=0.25, relheight=0.045)
 
+
         # error label
         self.error_label = tk.Label(self, text="", bg="#F1EEE9", fg="red", font=("Helvetica", 10))
         self.error_label.place(relx=0.15, rely=0.26, relheight=0.04)
 
 
-        # --- SEAT GRID LEGEND ---
+        # --- SEAT GRID ---
 
         # seat grid legend frame
         legend = tk.Frame(self, bg="#F1EEE9")
@@ -66,11 +66,11 @@ class HomePage(tk.Frame):
         legend_label_4 = tk.Label(legend, text="VIP Seats", bg="#F1EEE9", font=("Helvetica", 9))
         legend_label_4.place(relx=0.6, rely=0.625, relheight=0.25)
 
-
         # create seat grid (hall)
         self.seat_grid = SeatGrid(self, self.app)
         self.seat_grid.place(relx=0.15, rely=0.45, relwidth=0.70, relheight=0.45)
         self.seat_grid.update()
+
 
         # pick seats for me button
         self.pick_seats_btn = tk.Button(self, text="Pick Seats For Me", bg="#15133C", fg="white", 
@@ -82,11 +82,13 @@ class HomePage(tk.Frame):
             relief="flat", command=self.confirm_book_seats)
         self.book_seats_btn.place(relx=0.85, rely=0.92, relwidth=0.10, relheight=0.05, anchor="ne")
 
+
     def select_date(self):
         date = self.calendar.get_date() # get date from calendar
 
-        # return if no date is selected
+        # show error msg if no date is selected
         if not date:
+            self.show("Please select a date.")
             return
 
         if self.event[2] == date: return # return if the same date was selected
@@ -94,6 +96,7 @@ class HomePage(tk.Frame):
         self.event = self.app.db.get_event_by_date(date) # update event
         self.event_title_label.configure(text=f"{self.event[1]} | {self.event[2]}") # update event label
         self.seat_grid.update() # update seat grid
+
 
     def confirm_book_seats(self):
         # show error msg if no seats are selected
@@ -104,8 +107,9 @@ class HomePage(tk.Frame):
         response = messagebox.askquestion(
             "Confirmation", 
             "Are you sure you want to book the selected seats?"
-            )
+        )
         if response == "yes": self.book_selected_seats()
+
 
     def book_selected_seats(self):
         user_id = self.app.auth_manager.logged_in_user_id # get logged in user id
@@ -123,34 +127,18 @@ class HomePage(tk.Frame):
         
         self.show() # refresh the home page
 
+
     def show(self, message="", message_color="red"):
         self.error_label.configure(text=message, fg=message_color) # set the error message (if any)
         self.seat_grid.update()                                    # update seat grid
         self.tkraise()                                             # raise home page
 
 
-class SeatButton(tk.Button):
-    def __init__(self, seat_grid, seat_num):
-        super().__init__(seat_grid, text=seat_num, relief="flat")
-        self.seat_num = seat_num
-        self.seat_grid = seat_grid
-
-    def change_to_selected(self):
-        self.configure(bg="#FFBF00")                        # change button appearance
-        self.configure(command=self.change_to_open)         # change button command
-        self.seat_grid.selected_seats.add(self.seat_num)    # add seat number to selected
-    
-    def change_to_open(self):
-        self.configure(bg="white")                          # change button appearance
-        self.configure(command=self.change_to_selected)     # change button command
-        self.seat_grid.selected_seats.remove(self.seat_num) # remove seat number from selected
-
-
 class SeatGrid(tk.Frame):
     def __init__(self, home_page, app):
         super().__init__(home_page, bg="#F1EEE9")
-        self.app = app
-        self.home_page = home_page
+        self.app = app # store the app instance
+        self.home_page = home_page # store the home_page instance
         self.seat_buttons = {} # seat numbers are keys and SeatButton instaces are values
         self.selected_seats = set() # the set of selected seats
 
@@ -257,7 +245,7 @@ class SeatGrid(tk.Frame):
         # show error message if user requested more seats than total seats available
         if len(picked_seats) != seat_count:
             self.home_page.error_label.configure(
-                text="Sorry, the requested number of seats aren't available"
+                text="Sorry, the requested number of seats aren't available."
             )
             return
 
@@ -269,3 +257,20 @@ class SeatGrid(tk.Frame):
                 command=self.seat_buttons[s].change_to_open
             )
             self.selected_seats.add(s) # add seat number to selected
+
+
+class SeatButton(tk.Button):
+    def __init__(self, seat_grid, seat_num):
+        super().__init__(seat_grid, text=seat_num, relief="flat")
+        self.seat_num = seat_num   # store the seat number
+        self.seat_grid = seat_grid # store the seat grid (parent)
+
+    def change_to_selected(self):
+        self.configure(bg="#FFBF00")                        # change button appearance
+        self.configure(command=self.change_to_open)         # change button command
+        self.seat_grid.selected_seats.add(self.seat_num)    # add seat number to selected
+    
+    def change_to_open(self):
+        self.configure(bg="white")                          # change button appearance
+        self.configure(command=self.change_to_selected)     # change button command
+        self.seat_grid.selected_seats.remove(self.seat_num) # remove seat number from selected

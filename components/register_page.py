@@ -4,7 +4,7 @@ import tkinter as tk
 class RegisterPage(tk.Frame):
     def __init__(self, app):
         super().__init__(app, bg="#F1EEE9")
-        self.app = app
+        self.app = app # store the app instance
 
         # put register page inside app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
@@ -51,6 +51,7 @@ class RegisterPage(tk.Frame):
             relief="flat", command= self.submit_data)
         self.register_btn.place(relx=0.8, rely=0.9, relheight=0.1, relwidth=0.2)
     
+
     def submit_data(self):
         # get data from the input fields
         first_name = self.first_name_entry.get()
@@ -92,16 +93,16 @@ class RegisterPage(tk.Frame):
         else: # if not registered successfully (email already in use)
             self.show(message="User with this email already exists.")
         
+
     def is_email_valid(self, email):
         """
             Return True if the format of the given email address is valid, False if not.
         """
-        # WILL BE UNCOMMENTED IN THE END
-        # regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        # if re.fullmatch(regex, email):
-        #     return True
-        # return False
-        return True
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        if re.fullmatch(regex, email):
+            return True
+        return False
+
 
     def show(self, message="", message_color="red"):
         self.error_label.configure(text=message, fg=message_color) # set the error message (if any)

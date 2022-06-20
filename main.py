@@ -14,8 +14,8 @@ from components.my_reservations_page import MyReservationsPage
 
 class App(tk.Tk):
     def __init__(self, db_name):
-        super().__init__()
-        self.geometry("1400x800")           # set window dimensions
+        super().__init__()                  # init the parent class
+        self.geometry("1400x800")           # set window dimension
         self.title("Reservation System")    # set window title
 
         self.db = Database(db_name)               # connect to database

@@ -3,7 +3,7 @@ import tkinter as tk
 class LoginPage(tk.Frame):
     def __init__(self, app):
         super().__init__(app, bg="#F1EEE9")
-        self.app = app
+        self.app = app # store the app instance
 
         # put login_page inside app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
@@ -43,6 +43,7 @@ class LoginPage(tk.Frame):
             relief="flat", command=self.app.register_page.show)
         self.register_btn.place(relx=0, rely=0.75, relheight=0.1)
     
+
     def submit_data(self):
         # get data from the input fields
         email = self.email_entry.get()
@@ -73,6 +74,7 @@ class LoginPage(tk.Frame):
         
         else: # if not logged in successfully (invalid credentials)
             self.show(message="User with these credentials does not exist.")
+
     
     def show(self, message="", message_color="red"):
         self.error_label.configure(text=message, fg=message_color) # set the error message (if any)

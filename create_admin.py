@@ -6,7 +6,7 @@ if len(sys.argv) != 5:
     print("Usage -> python create_admin.py <first_name> <last_name> <email> <password>")
     sys.exit()
 
-conn = sqlite3.connect("test2.db")
+conn = sqlite3.connect("reservation_system.db")
 cursor = conn.cursor()
 
 cursor.execute(

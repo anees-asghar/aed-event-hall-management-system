@@ -6,7 +6,7 @@ from tkinter import ttk
 class AdminPage(tk.Frame):
     def __init__(self, app):
         super().__init__(app, bg="#F1EEE9")
-        self.app = app
+        self.app = app # store app instance
 
         # put admin page in the app window
         self.place(relx=0.2, rely=0, relheight=1, relwidth=0.8)
@@ -40,9 +40,9 @@ class AdminPage(tk.Frame):
         self.month_radio.place(relx=0.5, rely=0.5, relwidth=0.15, anchor="w")
         
         # year option radio button
-        self.radio_year_btn = tk.Radiobutton(select_option_frame, variable=self.radio_btn_val, value=2, text="Year", 
+        self.year_radio = tk.Radiobutton(select_option_frame, variable=self.radio_btn_val, value=2, text="Year", 
             font=("Helvetica"), bg="#F1EEE9", command=self.year_radio_selected)
-        self.radio_year_btn.place(relx=0.65, rely=0.5, relwidth=0.15, anchor="w")
+        self.year_radio.place(relx=0.65, rely=0.5, relwidth=0.15, anchor="w")
 
 
         # --- SELECT DATE AREA ---
@@ -110,27 +110,35 @@ class AdminPage(tk.Frame):
   
 
     def day_radio_selected(self):
+        """ Show all three input fields (day, month, year). """
         self.day_combo.configure(state="readonly")
         self.month_combo.configure(state="readonly")
         self.year_combo.configure(state="readonly")
 
 
     def month_radio_selected(self):
+        """ Show only month and year input fields. """
         self.day_combo.configure(state="disabled")
         self.month_combo.configure(state="readonly")
         self.year_combo.configure(state="readonly")
 
 
     def year_radio_selected(self):
+        """ Show only year input field. """
         self.day_combo.configure(state="disabled")
         self.month_combo.configure(state="disabled")
         self.year_combo.configure(state="readonly")
 
 
     def generate_stats(self, reservations):
-        total_tickets_sold = len(reservations)
+        """
+            Calculate and return the total_tickets_sold, vip_tickets_sold and total_tickets_value 
+            give a list of reservations.
+        """
+        total_tickets_sold = len(reservations) 
         vip_tickets_sold = len(list(filter(lambda r: r[1]=="VIP", reservations)))
         total_tickets_value = sum([r[2] for r in reservations])
+
         return total_tickets_sold, vip_tickets_sold, total_tickets_value
 
 
@@ -141,7 +149,7 @@ class AdminPage(tk.Frame):
         month = self.month_combo.get() # get the selected month
         year = self.year_combo.get()   # get the selected year
 
-        # create db representation for day, month and year; for example day=09, month=05, year=22
+        # create db representations for day, month and year; for example day=09, month=05, year=22
         day_db = day if int(day) >= 10 else '0'+day
         month_num = self.months.index(month) + 1 # get month number; for example February = 2
         month_db = str(month_num) if month_num >= 10 else f"0{month_num}"
@@ -165,9 +173,9 @@ class AdminPage(tk.Frame):
         elif option_selected == 2: # user requested data by year
             reservations = self.app.db.select_reservations_by_year(year_db)
             self.stats_label.configure(text=f"Statistics | {year}")
-        
-        total_tickets_sold, vip_tickets_sold, total_tickets_value = self.generate_stats(reservations)
 
+        # update the display stats area
+        total_tickets_sold, vip_tickets_sold, total_tickets_value = self.generate_stats(reservations)
         self.total_tickets_sold_label.configure(text=f"Total Tickets Sold: {total_tickets_sold}")
         self.vip_tickets_sold_label.configure(text=f"VIP Tickets Sold: {vip_tickets_sold}")
         self.total_tickets_value_label.configure(text=f"Total Tickets Value: {total_tickets_value}€")
