@@ -48,29 +48,38 @@ class HomePage(tk.Frame):
 
         legend_btn_1 = tk.Button(legend, relief="flat", bg="#2AAA8A")
         legend_btn_1.place(relx=0, rely=0.125, relwidth=0.08, relheight=0.25)
-        legend_label_1 = tk.Label(legend, text="Owned Seats", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_1 = tk.Label(legend, text="Owned Seat", bg="#F1EEE9", font=("Helvetica", 9))
         legend_label_1.place(relx=0.1, rely=0.125, relheight=0.25)
 
-        legend_btn_2 = tk.Button(legend, relief="flat", bg="#DE3163")
-        legend_btn_2.place(relx=0.5, rely=0.125, relwidth=0.08, relheight=0.25)
-        legend_label_2 = tk.Label(legend, text="Reserved Seats", bg="#F1EEE9", font=("Helvetica", 9))
-        legend_label_2.place(relx=0.6, rely=0.125, relheight=0.25)
+        legend_btn_2 = tk.Button(legend, relief="flat", bg="white")
+        legend_btn_2.place(relx=0.33, rely=0.125, relwidth=0.08, relheight=0.25)
+        legend_label_2 = tk.Label(legend, text="Open Seat", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_2.place(relx=0.43, rely=0.125, relheight=0.25)
 
-        legend_btn_3 = tk.Button(legend, relief="flat", bg="#FFBF00")
-        legend_btn_3.place(relx=0, rely=0.625, relwidth=0.08, relheight=0.25)
-        legend_label_3 = tk.Label(legend, text="Selected Seats", bg="#F1EEE9", font=("Helvetica", 9))
-        legend_label_3.place(relx=0.1, rely=0.625, relheight=0.25)
+        legend_btn_3 = tk.Button(legend, relief="flat", bg="#DE3163")
+        legend_btn_3.place(relx=0.67, rely=0.125, relwidth=0.08, relheight=0.25)
+        legend_label_3 = tk.Label(legend, text="Reserved Seat", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_3.place(relx=0.77, rely=0.125, relheight=0.25)
 
-        legend_btn_4 = tk.Button(legend, relief="flat", bg="#F1EEE9", text="👑")
-        legend_btn_4.place(relx=0.5, rely=0.625, relwidth=0.08, relheight=0.25)
-        legend_label_4 = tk.Label(legend, text="VIP Seats", bg="#F1EEE9", font=("Helvetica", 9))
-        legend_label_4.place(relx=0.6, rely=0.625, relheight=0.25)
+        legend_btn_4 = tk.Button(legend, relief="flat", bg="#FFBF00")
+        legend_btn_4.place(relx=0, rely=0.625, relwidth=0.08, relheight=0.25)
+        legend_label_4 = tk.Label(legend, text="Selected Seat", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_4.place(relx=0.1, rely=0.625, relheight=0.25)
+
+        legend_btn_5 = tk.Button(legend, relief="flat", bg="#F1EEE9", text="👑")
+        legend_btn_5.place(relx=0.33, rely=0.625, relwidth=0.08, relheight=0.25)
+        legend_label_5 = tk.Label(legend, text="VIP Seat", bg="#F1EEE9", font=("Helvetica", 9))
+        legend_label_5.place(relx=0.43, rely=0.625, relheight=0.25)
 
         # create seat grid (hall)
         self.seat_grid = SeatGrid(self, self.app)
         self.seat_grid.place(relx=0.15, rely=0.45, relwidth=0.70, relheight=0.45)
         self.seat_grid.update()
-
+        
+        
+        # price label
+        self.price_label = tk.Label(self, bg="#F1EEE9", text="Normal Seat - 4€          VIP Seat - 12€")
+        self.price_label.place(relx=0.15, rely=0.92, relwidth=0.49, relheight=0.05)
 
         # pick seats for me button
         self.pick_seats_btn = tk.Button(self, text="Pick Seats For Me", bg="#15133C", fg="white", 
